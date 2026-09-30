@@ -1,0 +1,11 @@
+{
+  "name": "vollna-job-description",
+  "url": "https://www.vollna.com/dashboard/monitoring/result41173302",
+  "loginWhen": {
+    "textIncludes": ["Sign in to Vollna"],
+    "urlIncludes": "/login"
+  },
+  "textSelector": "div.break-words",
+  "text": true,
+  "_comment": "Just the job description block from a Vollna result page. Change url (or pass --url) for other results."
+}

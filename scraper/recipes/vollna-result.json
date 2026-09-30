@@ -1,0 +1,21 @@
+{
+  "name": "vollna-result",
+  "url": "https://www.vollna.com/dashboard/monitoring/result41173302",
+  "loginWhen": {
+    "textIncludes": ["Sign in to Vollna"],
+    "urlIncludes": "/login"
+  },
+  "text": true,
+  "_comment": "Start with text:true to see the page, then replace it with the fields below once the real selectors are known.",
+  "_fieldsExample": {
+    "jobs": {
+      "each": "table tbody tr",
+      "fields": {
+        "title": "td:nth-child(1)",
+        "link": { "selector": "td:nth-child(1) a", "attr": "href" },
+        "budget": "td:nth-child(2)",
+        "published": "td:nth-child(3)"
+      }
+    }
+  }
+}

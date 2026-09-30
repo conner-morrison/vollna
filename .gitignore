@@ -1,0 +1,18 @@
+# Secrets
+.env
+.env.*
+!.env.example
+gmail-client.json
+gmail-token.json
+
+# Live Chrome profiles: these hold real logins and cookies
+scraper/chrome-profile/
+scraper/profiles/
+
+# Scraped pages, results and local UI state
+scraper/pages/
+scraper/out/
+scraper/state.json
+
+# macOS
+.DS_Store

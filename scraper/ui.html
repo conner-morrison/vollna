@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Scraper</title>
+  <style>
+    :root {
+      --bg: #f6f7f9; --card: #fff; --text: #1f2937; --muted: #6b7280; --line: #e5e7eb;
+      --accent: #2563eb; --ok: #15803d; --okbg: #dcfce7; --warn: #b45309; --warnbg: #fef3c7;
+      --err: #b91c1c; --errbg: #fee2e2;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1115; --card: #181b21; --text: #e5e7eb; --muted: #9ca3af; --line: #2a2f37;
+        --accent: #3b82f6; --ok: #4ade80; --okbg: #14321f; --warn: #fbbf24; --warnbg: #3a2c0b;
+        --err: #f87171; --errbg: #3b1414;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px 16px; background: var(--bg); color: var(--text);
+           font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 760px; margin: 0 auto; display: grid; gap: 16px; }
+    h1 { font-size: 20px; margin: 0; }
+    h2 { font-size: 15px; margin: 0 0 10px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .grow { flex: 1 1 320px; }
+    button { font: inherit; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line);
+             background: var(--card); color: var(--text); cursor: pointer; }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button:disabled { opacity: .5; cursor: default; }
+    input { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+            border-radius: 8px; background: var(--bg); color: var(--text); }
+    label { display: grid; gap: 4px; font-weight: 500; }
+    label small { color: var(--muted); font-weight: 400; }
+    .session { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line);
+               border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
+    .session.active { border-color: var(--accent); }
+    .session .name { flex: 1; }
+    .tag { font-size: 12px; padding: 1px 8px; border-radius: 999px; }
+    .tag.ready { background: var(--okbg); color: var(--ok); }
+    .tag.waiting { background: var(--warnbg); color: var(--warn); }
+    .session button.danger { padding: 4px 10px; font-size: 13px; color: var(--err); border-color: var(--line); }
+    .session button.danger:hover { border-color: var(--err); }
+    .note, .muted { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+    #msg { padding: 10px 12px; border-radius: 8px; }
+    #msg.ok { background: var(--okbg); color: var(--ok); }
+    #msg.err { background: var(--errbg); color: var(--err); }
+    pre { white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--line);
+          border-radius: 8px; padding: 12px; max-height: 60vh; overflow: auto; margin: 0; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Scraper</h1>
+    <div id="msg" class="hidden"></div>
+
+    <section class="card">
+      <div class="row" style="justify-content: space-between">
+        <h2 style="margin:0">Session</h2>
+        <button id="toggleSessions">Session set up</button>
+      </div>
+      <p class="muted" id="sessionSummary">…</p>
+
+      <div id="sessionPanel" class="hidden" style="margin-top:12px">
+        <div id="sessionList"></div>
+
+        <div class="session" id="newRow">
+          <span class="name">+ New session</span>
+        </div>
+
+        <div id="newForm" class="hidden" style="margin-top:10px; display:grid; gap:8px">
+          <label>Name <small>(letters, digits, - and _)</small>
+            <input id="newName" placeholder="vollna" spellcheck="false">
+          </label>
+          <p class="note">A Chrome window opens on Vollna's sign-in page for this session.</p>
+          <div class="row">
+            <button class="primary" id="openLogin">Open browser to log in</button>
+            <button id="cancelNew">Cancel</button>
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:flex-end; margin-top:10px">
+          <button id="closeSessions">Close</button>
+        </div>
+
+        <div id="waitingBox" class="hidden" style="margin-top:10px">
+          <p class="note"><strong>Waiting for you to log in.</strong> A Chrome window is open on this
+            session's profile. Sign in there, then quit that window with <strong>⌘Q</strong> so Chrome
+            writes the login to disk, and click Done — it checks the session really works by loading the
+            URL above with it. (Leaving the window open also works; quitting with ⌘Q is the reliable
+            way for sites whose login cookie would otherwise vanish.)</p>
+          <button class="primary" id="loginDone">Done</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Page</h2>
+      <label>URL
+        <input id="url" placeholder="https://www.vollna.com/dashboard/monitoring/result41173302" spellcheck="false">
+      </label>
+      <div class="row" style="margin-top:10px">
+        <div class="grow">
+          <label>Only this element <small>(optional: tag, .class or #id)</small>
+            <input id="selector" placeholder="whole page" spellcheck="false">
+          </label>
+          <div class="row" style="margin-top:6px">
+            <button type="button" class="preset" data-pick="Job title">Job title</button>
+            <button type="button" class="preset" data-pick="Job link">Job link</button>
+            <button type="button" class="preset" data-pick="Job description">Job description</button>
+            <button type="button" class="preset" data-pick="Client info">Client info</button>
+            <button type="button" class="preset" data-pick="Project info">Project info</button>
+            <button type="button" class="preset" data-pick="Work history">Work history</button>
+          </div>
+        </div>
+        <button class="primary" id="run">Run</button>
+      </div>
+      <p class="note" id="runNote"></p>
+    </section>
+
+    <section class="card">
+      <div class="row" style="justify-content: space-between">
+        <h2 style="margin:0">Result</h2>
+        <button id="copy">Copy</button>
+      </div>
+      <pre id="out">Nothing yet.</pre>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const VOLLNA_LOGIN = 'https://www.vollna.com/login';
+    let sessions = [];
+    let selected = 'default';
+    let waitingFor = null;
+    let panelOpen = false;
+    // Categories switched on in the Result box; any combination works.
+    let picks = new Set(['Job title', 'Job link', 'Job description']);
+    const CLIENT_KEYS = ['Client Rank', 'Payment method verified', 'total spent', 'Hired number',
+      'active job', 'Posted job', 'Hire rate', 'Opened job', 'avg hourly rate', 'total hours',
+      'review score', 'review number', 'Registered', 'country', 'Region'];
+    const PROJECT_KEYS = ['Time per week', 'Project period', 'Expecting level', 'Project type'];
+    let lastResult = null;     // so the buttons can re-render without scraping again
+
+    function show(text, ok) {
+      const box = $('msg');
+      box.textContent = text;
+      box.className = ok ? 'ok' : 'err';
+    }
+
+    async function api(path, body) {
+      const res = await fetch(path, body ? {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      } : undefined);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      return data;
+    }
+
+    function renderSessions() {
+      const list = $('sessionList');
+      list.innerHTML = '';
+      if (!sessions.length) {
+        list.innerHTML = '<p class="muted">No sessions yet. Create one below.</p>';
+      }
+      sessions.forEach((s) => {
+        const row = document.createElement('div');
+        row.className = 'session' + (s.name === selected ? ' active' : '');
+        const LABELS = { 'logged-in': 'logged in', 'logged-out': 'logged out', missing: 'no profile' };
+        const verdict = s.check ? (LABELS[s.check.status] || 'not checked') : 'not checked';
+        const verdictClass = s.check && s.check.ok ? 'ready' : s.check ? 'waiting' : '';
+        const account = s.check && s.check.account ? ` <span class="muted">${s.check.account}</span>` : '';
+        row.innerHTML = `<span class="name">${s.name}${account}</span>`
+          + `<span class="tag ${verdictClass}" title="${s.check ? (s.check.detail + (s.check.at ? ' (checked ' + s.check.at.replace('T', ' ') + ')' : '')) : 'Never checked'}">${verdict}</span>`
+          + (s.state === 'waiting' ? '<span class="tag waiting">window open</span>' : '');
+        row.onclick = () => {
+          selected = s.name;
+          renderSessions();
+          api('/api/session/select', { name: s.name }).catch((e) => show(e.message, false));
+        };
+
+        const check = document.createElement('button');
+        check.textContent = 'Check';
+        check.title = 'Load a page with this session and confirm it is really signed in';
+        check.onclick = async (event) => {
+          event.stopPropagation();
+          check.disabled = true;
+          show(`Checking whether "${s.name}" is logged in… 10–30 seconds.`, true);
+          try {
+            const data = await api('/api/session/done', { name: s.name });
+            sessions = data.sessions;
+            renderSessions();
+            show(`${s.name}: ${data.check.detail}`, data.check.ok);
+          } catch (e) { show(e.message, false); } finally { check.disabled = false; }
+        };
+        row.appendChild(check);
+
+        const open = document.createElement('button');
+        open.textContent = 'Open';
+        open.title = 'Open a browser window logged in with this session';
+        open.onclick = async (event) => {
+          event.stopPropagation();
+          open.disabled = true;
+          try {
+            sessions = (await api('/api/session/open', { name: s.name, url: $('url').value.trim() })).sessions;
+            renderSessions();
+            show(`Opened a browser for "${s.name}"${s.check && s.check.account ? ' (' + s.check.account + ')' : ''}.`, true);
+          } catch (e) { show(e.message, false); } finally { open.disabled = false; }
+        };
+        row.appendChild(open);
+
+        if (s.check && !s.check.ok) {
+          const fix = document.createElement('button');
+          fix.textContent = 'Fix';
+          fix.title = 'Open Vollna for this session so you can log in again';
+          fix.onclick = async (event) => {
+            event.stopPropagation();
+            fix.disabled = true;
+            try {
+              const data = await api('/api/session/fix', { name: s.name });
+              sessions = data.sessions;
+              selected = s.name;
+              renderSessions();
+              show(`Vollna's sign-in page opened for "${s.name}". Log in, press ⌘Q, then click Done.`, true);
+            } catch (e) { show(e.message, false); } finally { fix.disabled = false; }
+          };
+          row.appendChild(fix);
+        }
+
+        const del = document.createElement('button');
+        del.className = 'danger';
+        del.textContent = 'Delete';
+        del.title = 'Forget this login and remove its Chrome profile';
+        del.onclick = async (event) => {
+          event.stopPropagation();
+          if (!confirm(`Delete session "${s.name}"?\n\nIts saved login is removed and you would have to log in again.`)) return;
+          del.disabled = true;
+          try {
+            sessions = (await api('/api/session/delete', { name: s.name })).sessions;
+            if (selected === s.name) selected = sessions.length ? sessions[0].name : 'default';
+            renderSessions();
+            show(`Deleted session "${s.name}".`, true);
+          } catch (e) { show(e.message, false); del.disabled = false; }
+        };
+        row.appendChild(del);
+        list.appendChild(row);
+      });
+      const current = sessions.find((s) => s.name === selected);
+      $('sessionSummary').textContent = sessions.length
+        ? `Using "${selected}"${current ? ' · ' + current.state : ''} · ${sessions.length} session(s) registered`
+        : 'No session yet — click Session set up.';
+      const waiting = sessions.find((s) => s.state === 'waiting');
+      waitingFor = waiting ? waiting.name : null;
+      $('waitingBox').classList.toggle('hidden', !waiting);
+    }
+
+    async function refresh() {
+      try {
+        const data = await api('/api/sessions');
+        sessions = data.sessions;
+        if (data.selected) selected = data.selected;            // remembered across reloads/restarts
+        else if (!sessions.find((s) => s.name === selected) && sessions.length) selected = sessions[0].name;
+        renderSessions();
+      } catch (e) { show(e.message, false); }
+    }
+
+    function setPanel(open) {
+      panelOpen = open;
+      $('sessionPanel').classList.toggle('hidden', !open);
+      $('toggleSessions').textContent = open ? 'Close' : 'Session set up';
+      if (!open) $('newForm').classList.add('hidden');
+      if (open) refresh();
+    }
+
+    $('toggleSessions').onclick = () => setPanel(!panelOpen);
+    $('closeSessions').onclick = () => setPanel(false);
+    $('newRow').onclick = () => { $('newForm').classList.remove('hidden'); $('newName').focus(); };
+    $('cancelNew').onclick = () => $('newForm').classList.add('hidden');
+
+    $('openLogin').onclick = async () => {
+      const name = $('newName').value.trim();
+      if (!name) return show('Give the session a name.', false);
+      try {
+        const data = await api('/api/session/new', { name, url: VOLLNA_LOGIN });
+        sessions = data.sessions;
+        selected = name;
+        $('newForm').classList.add('hidden');
+        renderSessions();
+        show(`A Chrome window opened for "${name}". Log in there, then click Done.`, true);
+      } catch (e) { show(e.message, false); }
+    };
+
+    $('loginDone').onclick = async () => {
+      const name = waitingFor || selected;
+      $('loginDone').disabled = true;
+      show(`Checking whether "${name}" is logged in… 10–30 seconds.`, true);
+      try {
+        const data = await api('/api/session/done', { name });
+        sessions = data.sessions;
+        renderSessions();
+        show(data.check.ok
+          ? `Session "${name}": ${data.check.detail}`
+          : `Session "${name}" is not logged in. ${data.check.detail}`, data.check.ok);
+      } catch (e) {
+        show(e.message, false);
+      } finally {
+        $('loginDone').disabled = false;
+      }
+    };
+
+    // Shows the categories you have switched on. With none on, or a selector typed, you get raw text.
+    function formatResult(data, selector) {
+      const fields = data.fields || {};
+      const client = data.client || {};
+      const project = data.project || {};
+      const names = ['Job title', 'Job link', 'Job description'];
+      const chosen = names.filter((name) => picks.has(name));
+      const wantClient = picks.has('Client info');
+      const wantProject = picks.has('Project info');
+      const wantHistory = picks.has('Work history');
+      const anything = names.some((name) => fields[name]) || CLIENT_KEYS.some((k) => client[k])
+        || PROJECT_KEYS.some((k) => project[k]) || (data.history || []).length;
+      if (selector || (!chosen.length && !wantClient && !wantProject && !wantHistory) || !anything) {
+        return data.text || '(nothing extracted)';
+      }
+      const parts = chosen.map((name) => `${name}:\n${fields[name] || '(not found)'}`);
+      if (wantProject) {
+        parts.push('Project info:\n'
+          + PROJECT_KEYS.map((k) => `  ${k}: ${project[k] || '(not found)'}`).join('\n'));
+      }
+      if (wantHistory) {
+        const history = data.history;
+        if (!history) {
+          parts.push('Work history:\n  (press Run again — work history is fetched only when this button is on)');
+        } else if (!history.length) {
+          parts.push('Work history:\n  (none found)');
+        } else {
+          let done = 0;
+          const rows = history.map((h) => {
+            const mark = h.status === 'in progress' ? 'in progress' : `#${++done}`;
+            const feedback = [
+              h['feedback score to freelancer'] ? `to freelancer ${h['feedback score to freelancer']}: ${h['written feedback to freelancer'] || '(no text)'}` : null,
+              h['feedback score to client'] ? `to client ${h['feedback score to client']}: ${h['written feedback to client'] || '(no text)'}` : null,
+            ].filter(Boolean).map((line) => `      ${line}`).join('\n');
+            return `  ${mark} ${h['job title'] || '(no title)'}\n`
+              + `      ${h['Project period'] || '?'} · ${h['project time commitment'] || '?'} · `
+              + `${h['hourly rate'] || '?'} · billed ${h['total billed'] || '?'}`
+              + (feedback ? '\n' + feedback : '');
+          });
+          parts.push(`Work history (${done} completed):\n` + rows.join('\n'));
+        }
+      }
+      if (wantClient) {
+        parts.push('Client info:\n'
+          + CLIENT_KEYS.map((k) => `  ${k}: ${client[k] || '(not found)'}`).join('\n'));
+      }
+      return parts.join('\n\n');
+    }
+
+    function highlightPresets() {
+      document.querySelectorAll('.preset').forEach((button) => {
+        button.classList.toggle('primary', picks.has(button.dataset.pick));
+      });
+    }
+
+    $('run').onclick = async () => {
+      const url = $('url').value.trim();
+      if (!url) return show('Paste a URL first.', false);
+      $('run').disabled = true;
+      $('runNote').textContent = 'Rendering in the background… this takes 10–30 seconds.';
+      $('out').textContent = '…';
+      try {
+        const data = await api('/api/run', {
+          session: selected, url, selector: $('selector').value.trim(), wait: 20,
+          history: picks.has('Work history'),
+        });
+        lastResult = data;
+        const account = data.account ? ` · session "${selected}" signed in as ${data.account}` : '';
+        $('runNote').textContent = `${data.chars} characters · ${data.title || 'no title'}${account}`;
+
+        if (data.accessDenied) {
+          $('out').textContent = `Vollna refused this page for ${data.account || 'this session'}.\n\n`
+            + 'That result belongs to a different Vollna account. Pick the right session in '
+            + 'Session set up, or log that account in.';
+          show(`No access: session "${selected}" is signed in as ${data.account || 'another account'}.`, false);
+        } else if (data.loginNeeded) {
+          $('out').textContent = 'This page is showing a sign-in form.';
+          show(`Session "${selected}" is not signed in. Use Session set up → New, log in, press ⌘Q, then Done.`, false);
+        } else {
+          $('out').textContent = formatResult(data, $('selector').value.trim());
+          const missing = ['Job title', 'Job link', 'Job description'].filter((n) => picks.has(n) && !(data.fields || {})[n]);
+          show(missing.length ? `Done, but not found on this page: ${missing.join(', ')}.` : 'Done.', !missing.length);
+        }
+      } catch (e) {
+        $('out').textContent = '';
+        show(e.message, false);
+      } finally {
+        $('run').disabled = false;
+      }
+    };
+
+    document.querySelectorAll('.preset').forEach((button) => {
+      button.onclick = () => {
+        const name = button.dataset.pick;
+        if (picks.has(name)) picks.delete(name);
+        else picks.add(name);
+        $('selector').value = '';        // categories come from the parser, not a selector
+        highlightPresets();
+        if (lastResult) $('out').textContent = formatResult(lastResult, '');
+        const chosen = ['Job title', 'Job link', 'Job description', 'Project info', 'Client info', 'Work history']
+          .filter((n) => picks.has(n));
+        show(chosen.length ? `Showing: ${chosen.join(', ')}.` : 'No category selected — showing the whole page.', true);
+      };
+    });
+    highlightPresets();
+
+    $('copy').onclick = () => {
+      navigator.clipboard.writeText($('out').textContent || '').then(() => show('Copied.', true));
+    };
+
+    refresh();
+    setInterval(() => { if (panelOpen) refresh(); }, 5000);
+  </script>
+</body>
+</html>
