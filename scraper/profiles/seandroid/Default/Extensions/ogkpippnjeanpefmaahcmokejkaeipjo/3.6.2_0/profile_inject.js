@@ -1,1 +1,0 @@
-(()=>{const e=document.createElement("script");e.src=chrome.runtime.getURL("profile_sync.js"),setTimeout(()=>{document.head.appendChild(e)},0)})();

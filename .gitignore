@@ -1,0 +1,25 @@
+# Chrome profiles: the browser sessions this project scrapes with. Each one holds that account's
+# cookies, Login Data and e-mail address, and weighs 100-250 MB. They are created on your machine by
+# "New session" in the control panel, so they must never be committed.
+profiles/
+chrome-profile/
+
+# Local Python environment. Rebuild it from requirements.txt instead of committing it.
+.venv-nlp/
+.venv/
+__pycache__/
+*.py[co]
+
+# Local settings and running state. reports.json keeps the relay id, which is this project's bearer
+# token; .env keeps the project name and any server address.
+.env
+reports.json
+state.json
+handled.json
+
+# Scraped pages and extraction results: other people's job posts and client details, not source code.
+pages/
+out/
+
+# macOS
+.DS_Store

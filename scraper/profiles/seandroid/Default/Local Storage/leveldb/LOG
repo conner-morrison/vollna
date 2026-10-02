@@ -1,6 +1,0 @@
-2026/10/01-15:52:13.119 1375073 Reusing MANIFEST /Users/zworkmac/Documents/dev/vollna/scraper/profiles/seandroid/Default/Local Storage/leveldb/MANIFEST-000001
-2026/10/01-15:52:13.122 1375073 Recovering log #3
-2026/10/01-15:52:13.125 1375073 Reusing old log /Users/zworkmac/Documents/dev/vollna/scraper/profiles/seandroid/Default/Local Storage/leveldb/000003.log 
-2026/10/01-16:05:34.129 137507a Level-0 table #5: started
-2026/10/01-16:05:34.136 137507a Level-0 table #5: 23815 bytes OK
-2026/10/01-16:05:34.140 137507a Delete type=0 #3

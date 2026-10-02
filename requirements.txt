@@ -1,0 +1,18 @@
+# Dependencies of the Vollna scraper.
+#
+#   python3 -m venv .venv-nlp
+#   .venv-nlp/bin/pip install -r requirements.txt
+#   .venv-nlp/bin/python server.py      # control panel on http://127.0.0.1:8787
+#
+# Only the client-name step needs a package; everything else - the control panel, the HTTP calls to
+# the relay, the HTML parsing - is Python standard library. Google Chrome must be installed, since
+# pages are read with your own logged-in Chrome profile.
+#
+# spaCy is pinned to 3.7.5 because later releases publish no wheel for Python 3.9 on an Intel Mac,
+# and numpy is held below 2.0 because that spaCy build is compiled against the 1.x ABI.
+spacy==3.7.5
+numpy<2
+
+# The English model spaCy names clients with. Installed straight from its release wheel, so no
+# separate "python -m spacy download" step is needed.
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
