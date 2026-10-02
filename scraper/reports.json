@@ -1,0 +1,91 @@
+{
+  "threads": [
+    {
+      "id": "local-1790891178866",
+      "title": "hi",
+      "channel": "jobs",
+      "completed": false,
+      "created": "2026-10-01 17:46",
+      "messages": []
+    },
+    {
+      "id": "local-1790891172815",
+      "title": "hi",
+      "channel": "jobs",
+      "completed": false,
+      "created": "2026-10-01 17:46",
+      "messages": [
+        {
+          "from": "me",
+          "text": "hi",
+          "at": "2026-10-01 17:47"
+        }
+      ]
+    },
+    {
+      "id": "register-1790890781129",
+      "title": "Register me: general-vollna-search",
+      "kind": "register",
+      "url": "https://relay-production-7643.up.railway.app/upwork/enrol",
+      "status": "registered",
+      "serverId": "w-56bd725cbcd05de7243460abbd797240",
+      "completed": false,
+      "created": "2026-10-01 17:39",
+      "messages": [
+        {
+          "from": "me",
+          "text": "Registration request sent to https://relay-production-7643.up.railway.app/upwork/enrol as \"general-vollna-search\".",
+          "at": "2026-10-01 17:39"
+        },
+        {
+          "from": "server",
+          "text": "Answered 202: waiting for someone to approve this worker in the console",
+          "at": "2026-10-01 17:39"
+        },
+        {
+          "from": "me",
+          "text": "Ticket: sXPQ8v_irhXX4_mOoIs6xfEkBae697Il5J2FAnSJEJM — use Request again to ask what came of it.",
+          "at": "2026-10-01 17:39"
+        },
+        {
+          "from": "me",
+          "text": "Asked again.",
+          "at": "2026-10-01 17:40"
+        },
+        {
+          "from": "server",
+          "text": "Answered 202: waiting for someone to approve this worker in the console",
+          "at": "2026-10-01 17:40"
+        },
+        {
+          "from": "server",
+          "text": "Registered. Your id is w-56bd725cbcd05de7243460abbd797240.\nregistered as general-vollna-search. Send this id as the bearer token from now on, and keep it: it is how this server knows you.",
+          "at": "2026-10-01 17:44"
+        }
+      ],
+      "ticket": "sXPQ8v_irhXX4_mOoIs6xfEkBae697Il5J2FAnSJEJM"
+    },
+    {
+      "id": "local-1790888958350",
+      "title": "hi",
+      "channel": "jobs",
+      "completed": true,
+      "created": "2026-10-01 17:09",
+      "messages": [
+        {
+          "from": "me",
+          "text": "hi",
+          "at": "2026-10-01 17:09"
+        },
+        {
+          "from": "me",
+          "text": "(marked completed)",
+          "at": "2026-10-01 17:15"
+        }
+      ]
+    }
+  ],
+  "cursor": {},
+  "relayUrl": "https://relay-production-7643.up.railway.app/upwork",
+  "serverId": "w-56bd725cbcd05de7243460abbd797240"
+}

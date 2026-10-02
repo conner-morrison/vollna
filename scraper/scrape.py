@@ -228,8 +228,11 @@ def parse_client(html):
     rate = grab(r'([\d.,\s]+)/hr avg hourly rate')
     found['avg hourly rate'] = rate + '/hr' if rate else None
     found['total hours'] = grab(r'([\d\s,]+)\s*hours paid')
-    found['review score'] = grab(r'([\d.]+)\s*\n?\s*of\s+[\d\s,]+\s*reviews')
-    found['review number'] = grab(r'of\s+([\d\s,]+)\s*reviews')
+    if regex.search(r'\bno reviews\b', block, regex.I):
+        found['review number'] = '0'          # new clients show "no reviews" instead of a score
+    else:
+        found['review score'] = grab(r'([\d.]+)\s*\n?\s*of\s+[\d\s,]+\s*reviews')
+        found['review number'] = grab(r'of\s+([\d\s,]+)\s*reviews')
     found['Registered'] = grab(r'Registered:\s*(.+)', clean=False)
 
     # After "Registered:" Vollna prints the country (twice) and then the city.
@@ -243,7 +246,9 @@ def parse_client(html):
     if after:
         found['country'] = after[0]
         for line in after[1:]:
-            if line != found['country'] and not regex.match(r'^\d{1,2}:\d{2}', line):
+            # skip the repeated country, the client's local time and bare counters
+            if (line != found['country'] and not regex.match(r'^\d{1,2}:\d{2}', line)
+                    and not regex.match(r'^[\d.,]+$', line)):
                 found['Region'] = line
                 break
     return found
@@ -335,6 +340,78 @@ def parse_work_history(fragment):
     return entries
 
 
+NAME_STOPWORDS = set("""a an the and or but so if then than that this these those it its he she they them him her
+his their was were is are be been being have has had do does did very highly great good nice excellent brilliant
+awesome perfect cool amazing wonderful pleasure happy glad thank thanks looking forward recommend recommended
+client clients customer buyer employer contract project projects job jobs work working worked task tasks team
+communication communications payment paid time timely fast quick easy clear kind friendly professional again
+future hope will would can could i we you my our your all always much more best better experience hire hired
+hiring freelancer person guy sir madam ok okay yes no cooperation collaboration test finished after agreed
+english availability really lot""".split())
+
+_SPACY = 'unloaded'
+
+
+def spacy_model():
+    """The small English model, loaded once. None when spaCy is not installed."""
+    global _SPACY
+    if _SPACY == 'unloaded':
+        try:
+            import spacy
+            _SPACY = spacy.load('en_core_web_sm')
+        except Exception:                      # not installed, or model missing
+            _SPACY = None
+    return _SPACY
+
+
+def client_name(history):
+    """The client's own name, read out of what freelancers wrote to them.
+
+    spaCy picks the people out of each feedback; a name mentioned in several of them wins. With no
+    spaCy available it falls back to capitalised words that are not ordinary praise vocabulary.
+    """
+    import collections
+    import re as regex
+
+    texts = [(entry.get('written feedback to client') or '',
+              (entry.get('job title') or ''), entry) for entry in history or []]
+    nlp = spacy_model()
+    counts = collections.Counter()
+    for text, _, _ in texts:
+        if not text.strip():
+            continue
+        # spaCy mislabels plenty of real names (it calls "Devanshu" a place), so take any
+        # name-like entity and add the capitalised-word rule as a second opinion.
+        found = {word for word in regex.findall(r'\b([A-Z][a-z]{1,14})\b', text)
+                 if word.lower() not in NAME_STOPWORDS}
+        if nlp is not None:
+            for ent in nlp(text).ents:
+                if ent.label_ in ('PERSON', 'GPE', 'ORG', 'NORP', 'FAC') and ent.text.split():
+                    found.add(ent.text.split()[0].strip())
+        for name in found:
+            if name.lower() not in NAME_STOPWORDS:
+                counts[name] += 1
+    if not counts:
+        return None, 0
+
+    # "Dev" and "Devanshu" are the same person: merge a short form into the longer one it starts.
+    groups = []                       # [{'variants': Counter-like dict, 'total': int}]
+    for name, hits in counts.most_common():
+        for group in groups:
+            if any(name.lower().startswith(other.lower()) or other.lower().startswith(name.lower())
+                   for other in group['variants']):
+                group['variants'][name] = hits
+                group['total'] += hits
+                break
+        else:
+            groups.append({'variants': {name: hits}, 'total': hits})
+
+    best = max(groups, key=lambda group: group['total'])
+    # the most used spelling wins; when equally used, the longer one rather than the short prefix
+    name = sorted(best['variants'].items(), key=lambda item: (item[1], len(item[0])))[-1][0]
+    return name, best['total']
+
+
 def fetch_work_history(page_html, profile, wait_ms=20000):
     """Vollna loads work history only on demand, from /project/<id>/work-history."""
     import json as json_module
@@ -349,6 +426,86 @@ def fetch_work_history(page_html, profile, wait_ms=20000):
     except ValueError:
         return []
     return parse_work_history(payload.get('content') or '')
+
+
+def plain_text(value):
+    """Readable text: no tags, no HTML entities, no stray whitespace.
+
+    Vollna's row JSON is escaped twice and carries <span class="keyword-highlighted"> markup, so a
+    description taken straight from it is unreadable.
+    """
+    import html as html_module
+    import re as regex
+
+    if not isinstance(value, str):
+        return value
+    text = value
+    for _ in range(3):                       # &amp;#x27; -> &#x27; -> '
+        unescaped = html_module.unescape(text)
+        if unescaped == text:
+            break
+        text = unescaped
+    text = regex.sub(r'(?is)<(script|style)[^>]*>.*?</\1>', ' ', text)
+    text = regex.sub(r'(?i)<br\s*/?>|</(p|div|li)>', '\n', text)
+    text = regex.sub(r'<[^>]+>', '', text)
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    text = regex.sub(r'[ \t]+', ' ', text)
+    text = regex.sub(r'\n{3,}', '\n\n', text)
+    return '\n'.join(line.rstrip() for line in text.split('\n')).strip()
+
+
+def text_lines(value):
+    """One entry per line, so a description travels as readable lines instead of escaped "\\n".
+
+    Blank lines are dropped: in JSON each line stands on its own anyway.
+    """
+    if not isinstance(value, str):
+        return value
+    return [line for line in (part.strip() for part in value.split('\n')) if line]
+
+
+def parse_rows(html):
+    """Every job row on a feed page, newest first, the way Vollna lists them."""
+    import html as html_module
+    import json as json_module
+    import re as regex
+    import urllib.parse
+
+    rows = []
+    marks = [m.start() for m in regex.finditer(r'data-project-context="', html)]
+    for index, mark in enumerate(marks):
+        raw = html[mark + len('data-project-context="'):].split('"', 1)[0]
+        try:
+            context = json_module.loads(html_module.unescape(raw))
+        except ValueError:
+            continue
+        # a row runs from the end of the previous row to its own context marker: the client block
+        # sits above the marker, the details below it
+        start = marks[index - 1] if index else 0
+        body = html[start:mark] + html[mark:marks[index + 1] if index + 1 < len(marks) else len(html)][:40000]
+
+        link = None
+        redirect = regex.search(r'href="(/go\?[^"]*url=[^"&]+)"', body)
+        if redirect:
+            query = urllib.parse.urlparse(redirect.group(1).replace('&amp;', '&')).query
+            encoded = urllib.parse.parse_qs(query).get('url', [''])[0]
+            link = urllib.parse.unquote(urllib.parse.unquote(encoded)) or None
+        if not link:
+            direct = regex.search(r'https://www\.upwork\.com/jobs/(~\d+)', body)
+            link = 'https://www.upwork.com/jobs/' + direct.group(1) if direct else None
+
+        budget = context.get('budgetRaw') or {}
+        rows.append({
+            'projectId': str(context.get('projectId') or ''),
+            'Job title': plain_text(context.get('title')),
+            'Job link': link,
+            'Job description': plain_text(context.get('description')),
+            'skills': [plain_text(skill) for skill in (context.get('skills') or [])],
+            'budget': budget,
+            'client': parse_client(body),
+            'project': parse_project(body),
+        })
+    return rows
 
 
 def result_from_html(html, url, recipe):

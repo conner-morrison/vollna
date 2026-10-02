@@ -1,0 +1,59 @@
+{
+   "checksum": "95da93847fb4ea5f3962b8dcdede1d7d",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "date_added": "13433869629535864",
+            "date_last_used": "0",
+            "guid": "65102d0f-f190-4b8f-94e8-7c04d6adf533",
+            "id": "8",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Vollna Alert Worker",
+            "type": "url",
+            "url": "https://script.google.com/macros/s/AKfycbyVKn0-fyLXbXhZnUkhjyvBgRpBojkyb3AQXqEWg6aJLw96zvAKrJcBJEvNymh0J4jS/exec"
+         }, {
+            "date_added": "13433869912845528",
+            "date_last_used": "0",
+            "guid": "8426ac7b-9a77-4297-a861-6a09dfd5d5f5",
+            "id": "9",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Vollna Alert Worker - Project Editor - Apps Script",
+            "type": "url",
+            "url": "https://script.google.com/home/projects/1N-R4eobZ8iJdjobnmL6etcR_RPVsnciur7Yo2jd_aAAKzfLL_r_k92sU/edit"
+         } ],
+         "date_added": "13435218480623681",
+         "date_last_used": "0",
+         "date_modified": "13433869912845528",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "5",
+         "name": "Bookmarks bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13435218480623681",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "6",
+         "name": "Other bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13435218480623681",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "7",
+         "name": "Mobile Bookmarks",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "Ct8BCr4BCIiBAhK3ASAAkgGjAQqgAQoOY2hyb21lX3N5bmNfYm0SBTUxIWJtGhIJrwGFSKxcBgARrwGFSKxcBgAiNAkRhXxIrFwGABADGcm/O7+2Ieo1IAEqHDUxIWJtL2ZkOjkxNjM3MjM1NTk0Njg4OTMxNjEiNAkRhXxIrFwGABADGcm/O7+2Ieo1IAEqHDUxIWJtL2ZkOjkxNjM3MjM1NTk0Njg4OTMxNjEpuTGFSKxcBgDqAQsIsbLy1QYQqKrcHBIAKhhRM3NnSElOYWVIYmNUR0FGa2VLRC93PT1IAxLrAQgIEuYBChwwc3N2VVlnZnMwRFVnVzNyZVNKanNPdHRxdHc9EmZaOkFEcXRBWndOMmJ6MnBaVXREVDBSaER6V3NsaC92V2RHUjhpckhYRWYxOWxLNVFTMk9jSzRSM0hnRy9maUE3LzNZR082dlBZemhqZVRGaDVyNStNM0Y5enorY0hMRFVvdGV3PT0YACAAKAAw7t3cj6bvlgM44KDCgoo0QOCgwoKKNEoceWpYMkl6a3o3dk5adjA2Z3lrLzhsUG4zWmM4PVoeIhwyQUp2OE05ZmFaMk1NLy80MUtUY0dTb3B1WTQ9ZUniVG8SqQEIBRKkAQoceXhKLzZmdmtlY3I3a3A1RVF6QjR0V0xwZGJFPRJOWjpBRHF0QVp6cDR0N0xlMEFOUkM5SHBFUDNiZTNRTkc1emhLTk5rRy9YbytkTVJqc1dvdFc2eDhXTTZ1TUordUhUbkZ3ZUE4T0FYaU0zGAAgACgAMJHTqque05YDOABAAEocYVJDV0xnaEY5YjVJbnFLSUR2dUovanZRa0ZjPWUAAAAAEsEBCAYSvAEKHFljU1RvbnZFU1B3cUNzNEwyY3JWaHY2OEw5OD0SZlo6QURxdEFaeXNaVUNVOERpT3BYRFFHdjcxVU5UOGZnRmw2Mmd1Nmw3dkxHeFNNdkQ2T3ovdyszUVVEaFRXOTIxMkZmL0lYc1A4VVZxN1JSNGp0Wk00d0VGVTFaTUhaczRJSVE9PRgAIAAoADCR06qrntOWAzgAQABKHG9QVmtod0JSYlY2NUtDV1IyK0lPTkhXb091OD1lAAAAABLrAQgJEuYBChxDUTAwa01QTHdpdW1EYVNGQ3dHQVZWSmNsVEk9EmZaOkFEcXRBWndOMmJ6MnBaVXREVDBSaER6V3NsaC9ETStPYjJoYWM3dWxOaUcwOVU3Rkw4TnNBOE1GV0pxTGMzQUtLOEZTOEptRUFQTGVLY0NUUlM2VnZwMWg3Yzl5TmppM0h3PT0YACAAKAAw3p/akKbvlgM4jcbTgoo0QI3G04KKNEocM0ZJSDJWc213SE5kRkpscDlxVGl6NFpFN2lZPVoeIhwzbFFDN2VxdnhCNzZ6ZWVJb2h0aU0wRTVxVU09ZUniVG8SwQEIBxK8AQocbmpnRHU4OGVDcnZYcDg2cEQ3ZkhHY3FGcDg4PRJmWjpBRHF0QVp4OUJpUlJZQmxGVnAzOFdZazZiY2wyQ1JxeUJ3WkhBUkcydWl6SHZKR1I3enB1TFo0aENGQ08ybzFjWlowV1FIdWpXaGoxeDJra1pRVkRjREo4MEd0WFMzYTJ3Zz09GAAgACgAMJHTqque05YDOABAAEoceXpOQjAxY241NEE3Y1JVMHVUKy9QZ21UdFVvPWUAAAAAMAE4AA==",
+   "version": 1
+}

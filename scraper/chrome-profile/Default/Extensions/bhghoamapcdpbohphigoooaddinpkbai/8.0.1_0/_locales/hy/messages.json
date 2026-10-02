@@ -1,0 +1,524 @@
+{
+   "about": {
+      "description": "About.",
+      "message": "Ծառայության Մասին"
+   },
+   "account": {
+      "description": "Account.",
+      "message": "Հաշիվ"
+   },
+   "accountName": {
+      "description": "Account Name.",
+      "message": "Օգտանուն"
+   },
+   "activate_auto_filter": {
+      "message": "Warning: Smart filter loosely matches the domain name to an account. Always verify that you are on the correct website before entering a code!"
+   },
+   "add_code": {
+      "description": "Add account.",
+      "message": "Ավելացնել հաշիվ"
+   },
+   "add_qr": {
+      "description": "Scan QR Code.",
+      "message": "Սկանավորել QR Կոդը"
+   },
+   "add_secret": {
+      "description": "Manual Entry.",
+      "message": "Ինքնուրույն Մուտքագրում"
+   },
+   "added": {
+      "description": "Added Account.",
+      "message": " հաշիվը հաջողությամբ ավելացվել է։"
+   },
+   "advanced": {
+      "message": "Կոմպլեքս"
+   },
+   "advisor": {
+      "message": "Խորհրդատու"
+   },
+   "advisor_insight_auto_fill_not_enabled": {
+      "message": "Ավտոմուտքագրումը ակտիվացնելու դեպքում կոդերը ավտոմատ կարգով կմուտքագրվեն վեբկայքերում։"
+   },
+   "advisor_insight_auto_lock_not_set": {
+      "message": "Ակտիվացրեք ավտոկողպումը՝ Ձեր տվյալները պաշտպանելու համար։"
+   },
+   "advisor_insight_browser_sync_not_enabled": {
+      "message": "Կայքզննարկչային համաժամեցումը ապակտիվացված է։ Միացնելով այն՝ կարող եք համաժամեցնել Ձեր հաշիվները տարբեր կայքզննարկիչներում։"
+   },
+   "advisor_insight_password_not_set": {
+      "message": "Սահմանեք գաղտնաբառ՝ Ձեր տվյալները պաշտպանելու համար։"
+   },
+   "advisor_insight_smart_filter_not_enabled": {
+      "message": "Խելացի ֆիլտրն ակտիվացնելը թույլատրում է արագ մատչում Ձեր հաշիվներին։"
+   },
+   "algorithm": {
+      "message": "Ալգորիթմ"
+   },
+   "autolock": {
+      "message": "Կողպել"
+   },
+   "backup": {
+      "message": "Կրկնօրինակում"
+   },
+   "backup_file_info": {
+      "message": "Արխիվացրեք Ձեր տվյալները՝ ֆայլի մեջ։"
+   },
+   "based_on_counter": {
+      "description": "Counter Based",
+      "message": "Ըստ Հաշվիչի"
+   },
+   "based_on_time": {
+      "description": "Time Based",
+      "message": "Ըստ Ժամի"
+   },
+   "browser_sync": {
+      "description": "Storage location",
+      "message": "Կայքզննարկիչի Համաժամեցում"
+   },
+   "capture_failed": {
+      "description": "Capture Failed",
+      "message": "Գրանցումը ձախողվեց։ Վերաբեռնեք էջը և կրկին փորձեք։"
+   },
+   "capture_local_file_failed": {
+      "description": "Import QR image backup instead of scan local image",
+      "message": "Ձեզ պետք է սկանավորել QR-կոդ լոկալ ֆայլի՞ց։ Օգտագործե՛ք «Ներմուծել QR-կոդային Կրկնօրինակում»։"
+   },
+   "clock_too_far_off": {
+      "description": "Local Time is Too Far Off",
+      "message": "Զգուշացում՝ Ձեր լոկալ ժամացույցը չափազանց սխալ է։ Խնդրում ենք ուղղել այն՝ շարունակելուց առաջ։"
+   },
+   "close": {
+      "description": "Close.",
+      "message": "Փակել"
+   },
+   "confirm_delete": {
+      "description": "Remove entry confirmation",
+      "message": "Դուք իսկապե՞ս ցանկանում եք ջնջել այս հաշիվը։ Այս գործողությունը անդառնալի է։"
+   },
+   "confirm_delete_all": {
+      "description": "Message that user is required to acknowledge before clearing all data.",
+      "message": "Ես ընդունում եմ, որ իմ տվյալները ընդմիշտ կջնջվեն։"
+   },
+   "confirm_phrase": {
+      "description": "Confirm Passphrase.",
+      "message": "Նոր Գաղտնաբառ (Կրկին)"
+   },
+   "copied": {
+      "description": "Copied.",
+      "message": "Պատճենվել է"
+   },
+   "current_phrase": {
+      "description": "Current Passphrase.",
+      "message": "Այժմյա Գաղտնաբառ"
+   },
+   "danger": {
+      "message": "Վտանգ"
+   },
+   "delete_all": {
+      "message": "Զրոյացնել «Authenticator»-ը"
+   },
+   "delete_all_warning": {
+      "message": "Այս գործողության արդյունքում վերջնականապես կջնջվեն Ձեր բոլոր տվյալները և «Authenticator»-ի կարգավորումները։ Զրոյացում կատարելուց առաջ խորհուրդ է տրվում կատարել կրկնօրինակում։"
+   },
+   "digits": {
+      "message": "Թվանշաններ"
+   },
+   "dismiss": {
+      "message": "Ջնջել"
+   },
+   "download_backup": {
+      "description": "Download backup file.",
+      "message": "Ներբեռնել Կրկնօրինակում"
+   },
+   "download_enc_backup": {
+      "description": "Download Encrypted Backup",
+      "message": "Ներբեռնել Կոդավորված Կրկնօրինակում"
+   },
+   "dropbox_risk": {
+      "description": "Backup risk warning.",
+      "message": "Զգուշացում՝ Կրկնօրինակումները չեն գաղտնագրվում։"
+   },
+   "edit": {
+      "description": "Edit",
+      "message": "Փոփոխել"
+   },
+   "enable_context_menu": {
+      "message": "Կցել «կոնտեքստ» ընտրացանկին"
+   },
+   "encrypted": {
+      "description": "Encrypted.",
+      "message": "Գաղտնագրված"
+   },
+   "errorqr": {
+      "description": "QR Error.",
+      "message": "Անվավեր QR կոդ։"
+   },
+   "errorsecret": {
+      "description": "Secret Error.",
+      "message": "«Գաղտնիք» դաշտը անվավեր է։"
+   },
+   "export_info": {
+      "description": "Export menu info text",
+      "message": "Զգուշացում՝ կրկնօրինակումները չեն գաղտնագրվում։ Ցանկանո՞ւմ եք ավելացնել այլ հավելվածի հաշիվ։ Տեղափոխե՛ք նշորդը ցանկացած հաշվի վերևից՝ աջ և սեղմեք թաքցրած կոճակը։"
+   },
+   "extDesc": {
+      "description": "Extension Description.",
+      "message": "Authenticator generates two-factor authentication codes in your browser."
+   },
+   "extName": {
+      "description": "Extension Name.",
+      "message": "Authenticator"
+   },
+   "extShortName": {
+      "description": "Extension Short Name.",
+      "message": "Authenticator"
+   },
+   "feedback": {
+      "description": "Feedback.",
+      "message": "Հետադարձ Կապ"
+   },
+   "import_backup": {
+      "description": "Import backup.",
+      "message": "Ներմուծել Կրկնօրինակում"
+   },
+   "import_backup_code": {
+      "description": "Import backup code.",
+      "message": "Ներմուծել Տեքստային Կրկնօրինակում"
+   },
+   "import_backup_file": {
+      "description": "Import backup file.",
+      "message": "Ներմուծել Կրկնօրինակման Ֆայլ"
+   },
+   "import_backup_qr": {
+      "description": "Import qr image backup.",
+      "message": "Ներմուծել QR-կոդային Կրկնօրինակում"
+   },
+   "import_backup_qr_in_batches": {
+      "description": "You can select multiple image files to import backup in batches.",
+      "message": "Մեկից ավել ֆայլ ընտրելով՝ հնարավոր է հերթագրել կրկնօրինակումների ներմուծումը։"
+   },
+   "import_backup_qr_partly_failed": {
+      "description": "Import successful, but some QR image cannot be recognized.",
+      "message": "Ներմուծումը հաջողությամբ կատարվեց։ Որոշ QR-կոդեր չեն ճանաչվել։"
+   },
+   "import_error_password": {
+      "description": "Error password warning when import backups.",
+      "message": "Կրկնօրինակումներ ներմուծելու համար անհրաժեշտ է մուտքագրել ճիշտ գաղտնաբառը։"
+   },
+   "import_otp_urls": {
+      "description": "Import OTP URLs. Shown as add account method.",
+      "message": "Import OTP URLs"
+   },
+   "import_qr_images": {
+      "description": "Import qr images. Shown as add account method.",
+      "message": "Import QR Images"
+   },
+   "info": {
+      "message": "Ծանուցում"
+   },
+   "invalid": {
+      "message": "Անվավեր"
+   },
+   "issuer": {
+      "description": "Issuer.",
+      "message": "Թողարկիչ"
+   },
+   "learn_more": {
+      "message": "Իմանալ ավելին"
+   },
+   "loading": {
+      "message": "Բեռնում..."
+   },
+   "local_passphrase_warning": {
+      "description": "localStorage password warning.",
+      "message": "Ձեր գաղտնաբառը պահվում է լոկալ հիշողության մեջ։ Խնդրում ենք անմիջապես փոխել այն անվտանգության ընտրացանկից։"
+   },
+   "lock": {
+      "description": "Lock accounts",
+      "message": "Կողպել"
+   },
+   "log_out": {
+      "description": "Sign out of 3rd party storage services",
+      "message": "Անջատել"
+   },
+   "manual_dropbox": {
+      "description": "Manual backup",
+      "message": "Ինքնուրույն Կրկնօրինակում"
+   },
+   "migration_fail": {
+      "description": "Import migration data failed.",
+      "message": "Ներմուծումը ձախողվեց։ Եթե Ձեր տվյալները «Google Authenticator»-ից եք ներմուծում, խնդրում ենք վերագեներացնել տվյալների արխիվը և կրկին փորձել։"
+   },
+   "migration_partly_fail": {
+      "description": "Some migration data is broken.",
+      "message": "Հաշվի տվյալների ներմուծումը մասամբ ձախողվեց։"
+   },
+   "minutes": {
+      "message": "րոպեից"
+   },
+   "new_phrase": {
+      "description": "New Passphrase.",
+      "message": "Նոր Գաղտնաբառ"
+   },
+   "no": {
+      "description": "No.",
+      "message": "Ոչ"
+   },
+   "no_entires": {
+      "message": "Հաշիվներ դեռ չկան։ Եկեք սկսենք՝ ավելացնելով Ձեր առաջին հաշիվը։"
+   },
+   "no_insight_available": {
+      "message": "Ամեն ինչ կարգին է՝ խորհուրդներ չկան։"
+   },
+   "ok": {
+      "description": "OK.",
+      "message": "Պարզ է"
+   },
+   "onedrive_business_perms": {
+      "message": "Ի՞նչու են «բիզնես» հաշիվները պահանջում առավել թույլտվություններ։"
+   },
+   "otp_backup_inform": {
+      "description": "Info text on import page",
+      "message": "Կարող եք ներմուծել կրկնօրինակումներ այլ հավելվածներից։"
+   },
+   "otp_backup_learn": {
+      "description": "learn more link on import page. Placed after otp_backup_inform",
+      "message": "Իմանալ ավելին"
+   },
+   "otp_unsupported_warn": {
+      "description": "Warning if using account that is not supported by standard backup format.",
+      "message": "Ձեր հաշիվների ցանկի մեջ մտնում է «Steam» կամ «Blizzard» ծառայության հաշիվ։ Ոչ-կոդավորված կրկնօրինակումները չեն օգտագործի ստանդարտ ձևաչափ։"
+   },
+   "passphrase_info": {
+      "description": "Passphrase Info",
+      "message": "Մուտքագրեք գաղտնաբառը՝ հաշվի տվյալները ապակոդավորելու համար։"
+   },
+   "password_policy_default_hint": {
+      "message": "Ձեր գաղտնաբառը չի հետևում կազմակերպության կողմից սահմանված կանոններին։ Հարցերի դեպքում՝ կապնվեք Ձեր ադմինիստրատորի հետ։"
+   },
+   "period": {
+      "message": "Ժամանակաշրջան"
+   },
+   "permission_active_tab": {
+      "message": "Մատչում տվյալ ներդիրին՝ QR-կոդի սկանավորման համար"
+   },
+   "permission_alarms": {
+      "message": "Allows auto-lock to work."
+   },
+   "permission_clipboard_write": {
+      "message": "Թույլատրում է փոփոխություններ կատարել կցատարում՝ հաշիվների կոդերը պատճենելու համար"
+   },
+   "permission_context_menus": {
+      "message": "Ավելացնում է «Authenticator»-ը՝ կոնտեքստ ընտրացանկում"
+   },
+   "permission_drive": {
+      "message": "Թույլատրում է կրկնօրինակել «Google Drive»-ում"
+   },
+   "permission_drive_cannot_revoke": {
+      "message": "Նախ՝ անջատեք «Google Drive»-ում կրկնօրինակումը։"
+   },
+   "permission_dropbox": {
+      "message": "Թույլատրում է կրկնօրինակել «Dropbox»-ում"
+   },
+   "permission_dropbox_cannot_revoke": {
+      "message": "Նախ՝ անջատեք «Dropbox»-ում կրկնօրինակումը։"
+   },
+   "permission_identity": {
+      "message": "Թույլատրում է մուտք գործել հիշողության ծառայություններ"
+   },
+   "permission_onedrive": {
+      "message": "Թույլատրում է կրկնօրինակել «OneDrive»-ում"
+   },
+   "permission_onedrive_cannot_revoke": {
+      "message": "Նախ՝ անջատեք «OneDrive»-ում կրկնօրինակումը։"
+   },
+   "permission_required": {
+      "message": "Այս թույլտվությունը պարտադիր է։ Դուք չեք կարող մերժել այն։"
+   },
+   "permission_revoke": {
+      "message": "Զրոյացնել"
+   },
+   "permission_scripting": {
+      "message": "Inject scripts into he current tab to scan QR codes and allow auto-fill to work."
+   },
+   "permission_show_required_permissions": {
+      "message": "Ցույց տալ անչեղարկելի թույլտվությունները"
+   },
+   "permission_storage": {
+      "message": "Կայքզննարկիչի հիշողության օգտագործում՝ որպես հաշիվների տվյալների պահեստ"
+   },
+   "permission_sync_clock": {
+      "message": "Թույլատրում է համաժամեցում՝ «Google»-ից"
+   },
+   "permission_unknown_permission": {
+      "message": "Անհայտ թույլտվություն։ Խնդրում ենք կապնվել ծրագրի մշակողների հետ։"
+   },
+   "permissions": {
+      "message": "Թույլտվություններ"
+   },
+   "phrase": {
+      "description": "Passphrase.",
+      "message": "Գաղտնաբառ"
+   },
+   "phrase_incorrect": {
+      "description": "Passphrase Incorrect.",
+      "message": "Բոլոր հաշիվները պետք է ապակոդավորվեն՝ նախքան նոր հաշիվ ավելացնելը: Շարունակելուց առաջ՝ նախ մուտքագրեք ճիշտ գաղտնաբառը:"
+   },
+   "phrase_incorrect_export": {
+      "description": "Skip Unable-decripted Data.",
+      "message": "Այն հաշիվները, որոնց հնարավոր չէ ապակոդավորել, չեն կրկնօրինակվի։"
+   },
+   "phrase_not_match": {
+      "description": "Passphrase Not Match.",
+      "message": "Գաղտնաբառը չի համապատասխանում"
+   },
+   "phrase_wrong": {
+      "message": "Password incorrect"
+   },
+   "popout": {
+      "description": "Make window turn into persistent popup",
+      "message": "Պատուհանային Կարգ"
+   },
+   "remember_phrase": {
+      "description": "Remember Passphrase",
+      "message": "Հիշել գաղտնաբառերը"
+   },
+   "remind_backup": {
+      "description": "Remind Backup",
+      "message": "Հիշեցում՝ կատարե՛ք կրկնօրինակում, քանի դեռ ուշ չէ։"
+   },
+   "remove": {
+      "description": "Remove password.",
+      "message": "Ջնջել"
+   },
+   "resize_popup_page": {
+      "description": "Popup Page Settings",
+      "message": "Նախընտրանքներ"
+   },
+   "scale": {
+      "description": "Scale",
+      "message": "Մասշտաբ"
+   },
+   "search": {
+      "description": "Search",
+      "message": "Որոնում"
+   },
+   "secret": {
+      "description": "Secret.",
+      "message": "Գաղտնիք"
+   },
+   "security": {
+      "description": "Security.",
+      "message": "Անվտանգության"
+   },
+   "security_warning": {
+      "description": "Passphrase Warning.",
+      "message": "Այս գաղտնաբառը կօգտագործվի Ձեր բոլոր հաշիվները կոդավորելու համար։ Ոչ ոք Ձեզ չի կարող օգնել, եթե հանկարծ մոռանաք այն։"
+   },
+   "settings": {
+      "description": "Settings.",
+      "message": "Կարգավորումներ"
+   },
+   "show_all_entries": {
+      "description": "Show all entries.",
+      "message": "Ցույց տալ ամբողջը"
+   },
+   "show_all_insights": {
+      "message": "Ցույց տալ բոլոր խորհուրդները"
+   },
+   "sign_in": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "Մուտք"
+   },
+   "sign_in_business": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "Մուտք (Բիզնես)"
+   },
+   "smart_filter": {
+      "message": "Խելացի Ֆիլտր"
+   },
+   "source": {
+      "description": "Source Code.",
+      "message": "Ելակետային Կոդ"
+   },
+   "storage_sync_info": {
+      "description": "3rd party backup info",
+      "message": "Ավտոկրկնօրինակեք Ձեր տվյալները՝ հիշողության ծառայություններում։"
+   },
+   "sync_clock": {
+      "description": "Sync Clock",
+      "message": "Համաժամեցնել Google-ից"
+   },
+   "theme": {
+      "description": "Theme",
+      "message": "Գեղատեսք"
+   },
+   "theme_compact": {
+      "description": "Compact theme",
+      "message": "Կոմպակտ"
+   },
+   "theme_dark": {
+      "description": "Dark theme",
+      "message": "Գիշերային"
+   },
+   "theme_flat": {
+      "description": "Flat theme",
+      "message": "Հարթ"
+   },
+   "theme_high_contrast": {
+      "description": "High Contrast theme",
+      "message": "Բարձր Կոնտրաստ"
+   },
+   "theme_light": {
+      "description": "Light theme",
+      "message": "Առավոտյան"
+   },
+   "theme_simple": {
+      "description": "Simple theme",
+      "message": "Հասարակ"
+   },
+   "token_revoked": {
+      "description": "Error authenticating to backup service. $SERVICE$ will be replaced with a proper noun (E.g.: 'Google Drive' or 'Dropbox')",
+      "message": "Չհաջողվեց կապ հաստատել «$SERVICE$»-ի հետ։ Փորձեք կրկին մուտք գործել։",
+      "placeholders": {
+         "service": {
+            "content": "$1",
+            "example": "Google Drive"
+         }
+      }
+   },
+   "translate": {
+      "description": "Translate.",
+      "message": "Թարգմանել"
+   },
+   "type": {
+      "message": "Տեսակ"
+   },
+   "update": {
+      "description": "Update.",
+      "message": "Թարմացնել"
+   },
+   "updateFailure": {
+      "description": "Update Failure.",
+      "message": "Ձախողում։"
+   },
+   "updateSuccess": {
+      "description": "Update Success.",
+      "message": "Հաջողություն։"
+   },
+   "use_autofill": {
+      "description": "Use Autofill",
+      "message": "Ավտոմուտքագրում"
+   },
+   "use_high_contrast": {
+      "description": "Use High Contrast",
+      "message": "Բարձր Կոնտրաստ"
+   },
+   "warning": {
+      "message": "Զգուշացում"
+   },
+   "yes": {
+      "description": "Yes.",
+      "message": "Այո"
+   }
+}

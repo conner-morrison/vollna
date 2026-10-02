@@ -1,0 +1,36 @@
+{
+  "selected": "seandroid",
+  "checks": {
+    "default": {
+      "name": "default",
+      "ok": true,
+      "status": "logged-in",
+      "detail": "Logged in as zacharywing303@gmail.com.",
+      "at": "2026-09-30T16:30:41",
+      "account": "zacharywing303@gmail.com"
+    },
+    "seandroid": {
+      "name": "seandroid",
+      "ok": true,
+      "status": "logged-in",
+      "detail": "Logged in as seandroid2026@outlook.com.",
+      "at": "2026-09-30T16:51:48",
+      "account": "seandroid2026@outlook.com"
+    }
+  },
+  "extract": [
+    "Job title",
+    "Job link",
+    "Job description",
+    "Project info",
+    "Client info",
+    "Client name",
+    "Work history"
+  ],
+  "send": [
+    "Job title",
+    "Job link",
+    "Job description",
+    "Client name"
+  ]
+}

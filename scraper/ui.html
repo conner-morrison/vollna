@@ -48,14 +48,79 @@
     #msg.err { background: var(--errbg); color: var(--err); }
     pre { white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--line);
           border-radius: 8px; padding: 12px; max-height: 60vh; overflow: auto; margin: 0; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
+    .workplace { display: grid; grid-template-columns: 210px 1fr; gap: 16px; align-items: start; }
+    @media (max-width: 720px) { .workplace { grid-template-columns: 1fr; } }
+    .workplace-main { display: grid; gap: 16px; }
+    .side h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .picks { display: grid; gap: 6px; }
+    .picks label { display: flex; align-items: center; gap: 8px; font-weight: 400; font-size: 13px; cursor: pointer; }
+    .picks input { width: auto; }
+    table.handled { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.handled th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 8px;
+                       border-bottom: 1px solid var(--line); }
+    table.handled td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .pill { font-size: 12px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+    .pill.bid { background: var(--okbg); color: var(--ok); }
+    .pill.manual { background: var(--warnbg); color: var(--warn); }
+    .pill.skip { background: var(--bg); color: var(--muted); }
+    .pill.sent { background: var(--okbg); color: var(--ok); }
+    .pill.failed { background: var(--errbg); color: var(--err); }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex;
+               align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+    .dialog { width: 100%; max-width: 420px; }
+    .dialog label.check { display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; }
+    .dialog label.check input { width: auto; }
+    .tag.wait { background: var(--warnbg); color: var(--warn); }
+    .report { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+    @media (max-width: 640px) { .report { grid-template-columns: 1fr; } }
+    .report-list { border-right: 1px solid var(--line); padding-right: 12px; }
+    @media (max-width: 640px) { .report-list { border-right: 0; padding-right: 0; } }
+    .thread { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
+    .thread.active { border-color: var(--accent); }
+    .thread .title { font-weight: 500; font-size: 13px; }
+    .thread .meta { color: var(--muted); font-size: 12px; }
+    .thread.done .title { text-decoration: line-through; color: var(--muted); }
+    .chat { display: grid; gap: 8px; max-height: 50vh; overflow: auto; }
+    .bubble { padding: 8px 10px; border-radius: 10px; font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+    .bubble.server { background: var(--bg); border: 1px solid var(--line); }
+    .bubble.me { background: var(--okbg); color: var(--ok); justify-self: end; max-width: 85%; }
+    .bubble .when { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+    textarea { font: inherit; width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+               border-radius: 8px; background: var(--bg); color: var(--text); resize: vertical; }
+    header { align-items: baseline; }
+    .between { justify-content: space-between; }
+    .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tabs button { border: 1px solid transparent; border-radius: 999px; background: none;
+                   color: var(--muted); padding: 6px 14px; }
+    .tabs button:hover { color: var(--text); }
+    .tabs button.active { color: var(--text); background: var(--card); border-color: var(--line); font-weight: 600; }
   </style>
 </head>
 <body>
   <main>
-    <h1>Scraper</h1>
+    <header class="row between">
+      <h1>Scraper</h1>
+      <div class="tabs">
+        <button class="tab active" data-tab="workplace">Workplace</button>
+        <button class="tab" data-tab="report">Report</button>
+        <button class="tab" data-tab="profile">Profile</button>
+      </div>
+    </header>
     <div id="msg" class="hidden"></div>
 
+    <div id="tab-workplace">
+    <div class="workplace">
+    <aside class="card side">
+      <h2>Extract</h2>
+      <div id="extractList" class="picks"></div>
+      <h2 style="margin-top:14px">Send to server</h2>
+      <div id="sendList" class="picks"></div>
+      <p class="note">Extract decides what is read off the page. Send decides what leaves this
+        project. Both are remembered.</p>
+    </aside>
+
+    <div class="workplace-main">
     <section class="card">
       <div class="row" style="justify-content: space-between">
         <h2 style="margin:0">Session</h2>
@@ -97,7 +162,13 @@
     </section>
 
     <section class="card">
-      <h2>Page</h2>
+      <div class="row between" style="margin-bottom:10px">
+        <h2 style="margin:0">Page</h2>
+        <div class="row">
+          <label class="check"><input type="radio" name="mode" value="manual" checked> Manual</label>
+          <label class="check"><input type="radio" name="mode" value="auto"> Auto</label>
+        </div>
+      </div>
       <label>URL
         <input id="url" placeholder="https://www.vollna.com/dashboard/monitoring/result41173302" spellcheck="false">
       </label>
@@ -106,18 +177,29 @@
           <label>Only this element <small>(optional: tag, .class or #id)</small>
             <input id="selector" placeholder="whole page" spellcheck="false">
           </label>
-          <div class="row" style="margin-top:6px">
-            <button type="button" class="preset" data-pick="Job title">Job title</button>
-            <button type="button" class="preset" data-pick="Job link">Job link</button>
-            <button type="button" class="preset" data-pick="Job description">Job description</button>
-            <button type="button" class="preset" data-pick="Client info">Client info</button>
-            <button type="button" class="preset" data-pick="Project info">Project info</button>
-            <button type="button" class="preset" data-pick="Work history">Work history</button>
-          </div>
         </div>
         <button class="primary" id="run">Run</button>
       </div>
       <p class="note" id="runNote"></p>
+
+      <div id="autoPanel" class="hidden" style="margin-top:12px; border-top:1px solid var(--line); padding-top:12px">
+        <div class="row">
+          <label style="flex:0 0 150px">Check every
+            <select id="autoInterval">
+              <option value="60">1 minute</option>
+              <option value="120" selected>2 minutes</option>
+              <option value="300">5 minutes</option>
+              <option value="900">15 minutes</option>
+            </select>
+          </label>
+          <button id="autoStart" class="primary">Start watching</button>
+          <button id="autoStop" disabled>Stop</button>
+          <button id="autoForget" title="Treat every job on the page as new again">Forget seen</button>
+        </div>
+        <p class="note" id="autoStatus">Not watching.</p>
+        <p class="note">Jobs already on the page when watching starts are remembered but not handled;
+          only ones appearing afterwards are decided and sent.</p>
+      </div>
     </section>
 
     <section class="card">
@@ -126,7 +208,72 @@
         <button id="copy">Copy</button>
       </div>
       <pre id="out">Nothing yet.</pre>
+      <div id="autoResult" class="hidden">
+        <table class="handled">
+          <thead><tr><th>When</th><th>Job</th><th>Decision</th><th>Sent</th></tr></thead>
+          <tbody id="handledRows"></tbody>
+        </table>
+        <p class="note" id="handledNote"></p>
+      </div>
     </section>
+    </div>
+
+    <div id="tab-report" class="hidden">
+      <p id="regBanner" class="note hidden" style="margin-bottom:10px"></p>
+      <section class="card report">
+        <aside class="report-list">
+          <div class="row between" style="margin-bottom:8px">
+            <h2 style="margin:0">Instructions</h2>
+            <button id="newThread" title="Start a request to the server">New</button>
+          </div>
+          <div id="threadList"><p class="muted">Nothing yet.</p></div>
+        </aside>
+
+        <div class="report-chat">
+          <div class="row between" style="margin-bottom:8px">
+            <h2 id="chatTitle" style="margin:0">Select an instruction</h2>
+            <div class="row">
+              <button id="againBtn" class="hidden">Request again</button>
+              <button id="completeBtn" class="hidden">Complete</button>
+            </div>
+          </div>
+          <div id="chatHistory" class="chat"><p class="muted">Pick something on the left.</p></div>
+          <p id="waitingNote" class="muted hidden">Waiting for the server to approve this registration
+            and send your id. Nothing can be written until then.</p>
+          <div id="composer" class="hidden" style="margin-top:10px">
+            <textarea id="chatText" rows="3" placeholder="Write to the server…"></textarea>
+            <div class="row" style="margin-top:8px; justify-content:flex-end">
+              <button id="sendBtn" class="primary">Send</button>
+            </div>
+          </div>
+          <p id="completedNote" class="muted hidden">This instruction is completed, so there is nothing to write.
+            Use Reopen if it needs more work.</p>
+        </div>
+      </section>
+    </div>
+
+    <div id="newDialog" class="overlay hidden" aria-hidden="true">
+      <div class="card dialog">
+        <h2>New</h2>
+        <label class="check"><input type="radio" name="newKind" value="general" checked> General request</label>
+        <label class="check"><input type="radio" name="newKind" value="register"> Register me</label>
+        <label id="newFieldLabel" style="margin-top:10px">Name of request
+          <input id="newValue" placeholder="What is this about?" spellcheck="false">
+        </label>
+        <p class="note" id="newHint">A new conversation opens; type the request in it.</p>
+        <div class="row" style="justify-content:flex-end; margin-top:12px">
+          <button id="newCancel">Cancel</button>
+          <button id="newOk" class="primary">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-profile" class="hidden">
+      <section class="card">
+        <h2>Profile</h2>
+        <p class="muted">Nothing here yet.</p>
+      </section>
+    </div>
   </main>
 
   <script>
@@ -136,11 +283,49 @@
     let selected = 'default';
     let waitingFor = null;
     let panelOpen = false;
-    // Categories switched on in the Result box; any combination works.
-    let picks = new Set(['Job title', 'Job link', 'Job description']);
+    let items = [];              // everything that can be extracted
+    let extract = new Set();     // what this run reads off the page
+    let sendSet = new Set();     // what may leave this project
     const CLIENT_KEYS = ['Client Rank', 'Payment method verified', 'total spent', 'Hired number',
       'active job', 'Posted job', 'Hire rate', 'Opened job', 'avg hourly rate', 'total hours',
       'review score', 'review number', 'Registered', 'country', 'Region'];
+
+    async function loadPrefs() {
+      const data = await api('/api/prefs');
+      items = data.items;
+      extract = new Set(data.extract);
+      sendSet = new Set(data.send);
+      renderPicks();
+    }
+
+    async function savePrefs() {
+      try {
+        await api('/api/prefs', { extract: [...extract], send: [...sendSet] });
+      } catch (e) { show(e.message, false); }
+    }
+
+    function renderPicks() {
+      [['extractList', extract], ['sendList', sendSet]].forEach(([id, chosen]) => {
+        const box = $(id);
+        box.innerHTML = '';
+        items.forEach((item) => {
+          const label = document.createElement('label');
+          const input = document.createElement('input');
+          input.type = 'checkbox';
+          input.checked = chosen.has(item);
+          input.onchange = () => {
+            if (input.checked) chosen.add(item); else chosen.delete(item);
+            if (id === 'sendList' && input.checked) { extract.add(item); }   // cannot send what is not read
+            renderPicks();
+            savePrefs();
+            if (lastResult) $('out').textContent = formatResult(lastResult, $('selector').value.trim());
+          };
+          label.appendChild(input);
+          label.appendChild(document.createTextNode(' ' + item));
+          box.appendChild(label);
+        });
+      });
+    }
     const PROJECT_KEYS = ['Time per week', 'Project period', 'Expecting level', 'Project type'];
     let lastResult = null;     // so the buttons can re-render without scraping again
 
@@ -312,20 +497,26 @@
 
     // Shows the categories you have switched on. With none on, or a selector typed, you get raw text.
     function formatResult(data, selector) {
+      if (selector) return data.text || '(nothing extracted)';
       const fields = data.fields || {};
       const client = data.client || {};
       const project = data.project || {};
+      const asked = new Set(data.extract || [...extract]);
       const names = ['Job title', 'Job link', 'Job description'];
-      const chosen = names.filter((name) => picks.has(name));
-      const wantClient = picks.has('Client info');
-      const wantProject = picks.has('Project info');
-      const wantHistory = picks.has('Work history');
+      const chosen = names.filter((name) => asked.has(name));
+      const wantClient = asked.has('Client info');
+      const wantProject = asked.has('Project info');
+      const wantHistory = asked.has('Work history');
       const anything = names.some((name) => fields[name]) || CLIENT_KEYS.some((k) => client[k])
-        || PROJECT_KEYS.some((k) => project[k]) || (data.history || []).length;
-      if (selector || (!chosen.length && !wantClient && !wantProject && !wantHistory) || !anything) {
-        return data.text || '(nothing extracted)';
-      }
+        || PROJECT_KEYS.some((k) => project[k]) || (data.history || []).length || data.clientName;
+      if (!asked.size || !anything) return data.text || '(nothing extracted)';
       const parts = chosen.map((name) => `${name}:\n${fields[name] || '(not found)'}`);
+      if (asked.has('Client name') && data.clientName) {
+        const found = data.clientName;
+        parts.push('Client name:\n  ' + (found.name
+          ? `${found.name} (named in ${found.mentions} feedback${found.mentions === 1 ? '' : 's'}, via ${found.engine})`
+          : '(no name written in any feedback)'));
+      }
       if (wantProject) {
         parts.push('Project info:\n'
           + PROJECT_KEYS.map((k) => `  ${k}: ${project[k] || '(not found)'}`).join('\n'));
@@ -359,68 +550,247 @@
       return parts.join('\n\n');
     }
 
-    function highlightPresets() {
-      document.querySelectorAll('.preset').forEach((button) => {
-        button.classList.toggle('primary', picks.has(button.dataset.pick));
+
+    function renderThreads() {
+      const list = $('threadList');
+      list.innerHTML = threads.length ? '' : '<p class="muted">Nothing yet.</p>';
+      threads.forEach((t) => {
+        const row = document.createElement('div');
+        row.className = 'thread' + (t.completed ? ' done' : '') + (openThread === t.id ? ' active' : '');
+        const done = t.status === 'registered' || t.status === 'approved';
+        const state = t.kind === 'register' ? (done ? ' · registered · id ' + (t.serverId || '?') : ' · waiting') : '';
+        row.innerHTML = `<div class="title">${t.title}</div>`
+          + `<div class="meta">${t.created} · ${t.count} message${t.count === 1 ? '' : 's'}`
+          + `${state}${t.completed ? ' · completed' : ''}</div>`;
+        row.onclick = () => openConversation(t.id);
+        list.appendChild(row);
       });
     }
 
-    $('run').onclick = async () => {
-      const url = $('url').value.trim();
-      if (!url) return show('Paste a URL first.', false);
-      $('run').disabled = true;
-      $('runNote').textContent = 'Rendering in the background… this takes 10–30 seconds.';
-      $('out').textContent = '…';
-      try {
-        const data = await api('/api/run', {
-          session: selected, url, selector: $('selector').value.trim(), wait: 20,
-          history: picks.has('Work history'),
-        });
-        lastResult = data;
-        const account = data.account ? ` · session "${selected}" signed in as ${data.account}` : '';
-        $('runNote').textContent = `${data.chars} characters · ${data.title || 'no title'}${account}`;
-
-        if (data.accessDenied) {
-          $('out').textContent = `Vollna refused this page for ${data.account || 'this session'}.\n\n`
-            + 'That result belongs to a different Vollna account. Pick the right session in '
-            + 'Session set up, or log that account in.';
-          show(`No access: session "${selected}" is signed in as ${data.account || 'another account'}.`, false);
-        } else if (data.loginNeeded) {
-          $('out').textContent = 'This page is showing a sign-in form.';
-          show(`Session "${selected}" is not signed in. Use Session set up → New, log in, press ⌘Q, then Done.`, false);
-        } else {
-          $('out').textContent = formatResult(data, $('selector').value.trim());
-          const missing = ['Job title', 'Job link', 'Job description'].filter((n) => picks.has(n) && !(data.fields || {})[n]);
-          show(missing.length ? `Done, but not found on this page: ${missing.join(', ')}.` : 'Done.', !missing.length);
-        }
-      } catch (e) {
-        $('out').textContent = '';
-        show(e.message, false);
-      } finally {
-        $('run').disabled = false;
+    function renderChat(thread) {
+      openThread = thread.id;
+      $('chatTitle').textContent = thread.title;
+      const history = $('chatHistory');
+      history.innerHTML = '';
+      (thread.messages || []).forEach((m) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble ' + (m.from === 'me' ? 'me' : 'server');
+        bubble.textContent = m.text;
+        const when = document.createElement('span');
+        when.className = 'when';
+        when.textContent = (m.from === 'me' ? 'you' : 'server') + ' · ' + m.at;
+        bubble.appendChild(when);
+        history.appendChild(bubble);
+      });
+      history.scrollTop = history.scrollHeight;
+      const waiting = thread.kind === 'register'
+        && !(thread.status === 'registered' || thread.status === 'approved');
+      $('completeBtn').classList.remove('hidden');
+      $('completeBtn').textContent = thread.completed ? 'Reopen' : 'Complete';
+      $('composer').classList.toggle('hidden', !!thread.completed || waiting || !registered);
+      $('againBtn').classList.toggle('hidden', !waiting || !!thread.completed);
+      $('completedNote').classList.toggle('hidden', !thread.completed);
+      $('waitingNote').classList.toggle('hidden', !waiting || !!thread.completed);
+      if (thread.kind === 'register' && (thread.status === 'registered' || thread.status === 'approved')) {
+        $('chatTitle').textContent = thread.title + ' — your id: ' + thread.serverId;
       }
+      renderThreads();
+    }
+
+    async function openConversation(id) {
+      try {
+        const data = await api('/api/reports/thread?id=' + encodeURIComponent(id));
+        renderChat(data.thread);
+      } catch (e) { show(e.message, false); }
+    }
+
+    $('sendBtn').onclick = async () => {
+      const text = $('chatText').value.trim();
+      if (!text || !openThread) return;
+      $('sendBtn').disabled = true;
+      try {
+        const data = await api('/api/reports/message', { id: openThread, text });
+        $('chatText').value = '';
+        renderChat(data.thread);
+        await loadThreads();
+        show('Sent to the server.', true);
+      } catch (e) { show(e.message, false); } finally { $('sendBtn').disabled = false; }
     };
 
-    document.querySelectorAll('.preset').forEach((button) => {
-      button.onclick = () => {
-        const name = button.dataset.pick;
-        if (picks.has(name)) picks.delete(name);
-        else picks.add(name);
-        $('selector').value = '';        // categories come from the parser, not a selector
-        highlightPresets();
-        if (lastResult) $('out').textContent = formatResult(lastResult, '');
-        const chosen = ['Job title', 'Job link', 'Job description', 'Project info', 'Client info', 'Work history']
-          .filter((n) => picks.has(n));
-        show(chosen.length ? `Showing: ${chosen.join(', ')}.` : 'No category selected — showing the whole page.', true);
-      };
+    $('completeBtn').onclick = async () => {
+      if (!openThread) return;
+      const thread = threads.find((t) => t.id === openThread);
+      const completed = !(thread && thread.completed);
+      try {
+        const data = await api('/api/reports/complete', { id: openThread, completed });
+        renderChat(data.thread);
+        await loadThreads();
+        show(completed ? 'Marked completed.' : 'Reopened.', true);
+      } catch (e) { show(e.message, false); }
+    };
+
+    function newKind() {
+      const picked = document.querySelector('input[name="newKind"]:checked');
+      return picked ? picked.value : 'general';
+    }
+
+    function syncDialog() {
+      const register = newKind() === 'register';
+      $('newFieldLabel').firstChild.nodeValue = register ? 'Server URL' : 'Name of request';
+      $('newValue').placeholder = register ? 'https://server.example.com/register' : 'What is this about?';
+      $('newHint').textContent = register
+        ? `This project registers itself as "${PROJECT_NAME}". The server approves it and sends back an id.`
+        : (registered ? 'A new conversation opens; type the request in it.'
+                      : 'Available once the server has registered this project.');
+      $('newValue').value = '';
+      $('newValue').focus();
+    }
+
+    $('newThread').onclick = () => {
+      const general = document.querySelector('input[name="newKind"][value="general"]');
+      const register = document.querySelector('input[name="newKind"][value="register"]');
+      general.disabled = !registered;
+      if (!registered) register.checked = true;
+      $('newDialog').classList.remove('hidden');
+      syncDialog();
+    };
+    function closeDialog() { $('newDialog').classList.add('hidden'); }
+    $('newCancel').onclick = closeDialog;
+    $('newDialog').onclick = (e) => { if (e.target === $('newDialog')) closeDialog(); };
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDialog(); });
+    document.querySelectorAll('input[name="newKind"]').forEach((radio) => { radio.onchange = syncDialog; });
+    $('newValue').onkeydown = (e) => { if (e.key === 'Enter') $('newOk').click(); };
+
+    $('newOk').onclick = async () => {
+      const value = $('newValue').value.trim();
+      if (!value) return show(newKind() === 'register' ? 'Give the server URL.' : 'Give the request a name.', false);
+      $('newOk').disabled = true;
+      try {
+        const data = newKind() === 'register'
+          ? await api('/api/reports/register', { url: value })
+          : await api('/api/reports/new', { title: value, text: value });
+        closeDialog();
+        await loadThreads();
+        renderChat(data.thread);
+        show(newKind() === 'register'
+          ? 'Registration sent. Waiting for the server to approve and send your id.'
+          : 'Conversation created — write the request below.', true);
+      } catch (e) { show(e.message, false); } finally { $('newOk').disabled = false; }
+    };
+
+    $('againBtn').onclick = async () => {
+      if (!openThread) return;
+      $('againBtn').disabled = true;
+      try {
+        const data = await api('/api/reports/again', { id: openThread });
+        renderChat(data.thread);
+        await loadThreads();
+        show('Asked the server again.', true);
+      } catch (e) { show(e.message, false); } finally { $('againBtn').disabled = false; }
+    };
+
+    // ---- Manual vs Auto -----------------------------------------------------
+    let mode = 'manual';
+    let autoTimer = null;
+
+    function setMode(next) {
+      mode = next;
+      $('autoPanel').classList.toggle('hidden', mode !== 'auto');
+      $('run').classList.toggle('hidden', mode !== 'manual');
+      $('autoResult').classList.toggle('hidden', mode !== 'auto');
+      $('out').classList.toggle('hidden', mode === 'auto');
+      document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+        radio.checked = radio.value === mode;
+      });
+      try { localStorage.setItem('scraper.mode', mode); } catch (e) { /* private mode */ }
+      if (mode === 'auto') { loadAuto(); autoTimer = autoTimer || setInterval(loadAuto, 15000); }
+      else if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    function pill(text, kind) { return `<span class="pill ${kind}">${text}</span>`; }
+
+    function renderAuto(data) {
+      // Start is dead while watching, Stop is dead while not: one of the two is always the live one
+      $('autoStart').disabled = !!data.running;
+      $('autoStop').disabled = !data.running;
+      $('autoStatus').textContent = data.running
+        ? `Watching ${data.url} every ${data.interval}s · ${data.watching} jobs known · last check ${data.checked || 'pending'}`
+          + (data.error ? ` · problem: ${data.error}` : '')
+        : (data.error ? `Stopped. Last problem: ${data.error}` : 'Not watching.');
+      $('autoStatus').style.color = data.error ? 'var(--err)' : '';
+      const rows = $('handledRows');
+      rows.innerHTML = '';
+      (data.handled || []).forEach((job) => {
+        const decision = job.decision === 'bid' ? 'bid' : job.decision === 'skip' ? 'skip' : 'manual';
+        const sent = job.status === 'sent' ? 'sent' : job.status.startsWith('failed') ? 'failed' : 'skip';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${job.at}</td>`
+          + `<td>${job.link ? `<a href="${job.link}" target="_blank">${job.title || '(no title)'}</a>`
+                            : (job.title || '(no title)')}`
+            + `<div class="note">${job.why || ''}`
+            + `${job.clientName ? ' · client: ' + job.clientName : ''}`
+            + `${job.historyCount != null ? ' · ' + job.historyCount + ' past contracts' : ''}</div></td>`
+          + `<td>${pill(job.decision, decision)}</td>`
+          + `<td>${pill(job.status, sent)}</td>`;
+        rows.appendChild(tr);
+      });
+      $('handledNote').textContent = (data.handled || []).length
+        ? `${data.handled.length} job(s) handled since watching began.`
+        : 'No new job has appeared yet.';
+    }
+
+    async function loadAuto() {
+      try { renderAuto(await api('/api/auto')); } catch (e) { show(e.message, false); }
+    }
+
+    document.querySelectorAll('input[name="mode"]').forEach((radio) => {
+      radio.onchange = () => setMode(radio.value);
     });
-    highlightPresets();
 
-    $('copy').onclick = () => {
-      navigator.clipboard.writeText($('out').textContent || '').then(() => show('Copied.', true));
+    $('autoStart').onclick = async () => {
+      const url = $('url').value.trim();
+      if (!url) return show('Paste the feed URL to watch.', false);
+      $('autoStart').disabled = true;
+      try {
+        renderAuto(await api('/api/auto/start', {
+          url, session: selected, interval: Number($('autoInterval').value),
+        }));
+        show('Watching started.', true);
+      } catch (e) { show(e.message, false); $('autoStart').disabled = false; }
     };
+    $('autoStop').onclick = async () => {
+      try { renderAuto(await api('/api/auto/stop', {})); show('Stopped.', true); }
+      catch (e) { show(e.message, false); }
+    };
+    $('autoForget').onclick = async () => {
+      if (!confirm('Forget every job seen so far? The next check will treat them all as new.')) return;
+      try { renderAuto(await api('/api/auto/forget', {})); show('Cleared.', true); }
+      catch (e) { show(e.message, false); }
+    };
+
+    function showTab(name) {
+      ['workplace', 'report', 'profile'].forEach((tab) => {
+        $('tab-' + tab).classList.toggle('hidden', tab !== name);
+      });
+      document.querySelectorAll('.tab').forEach((button) => {
+        button.classList.toggle('active', button.dataset.tab === name);
+      });
+      try { localStorage.setItem('scraper.tab', name); } catch (e) { /* private mode */ }
+      if (name === 'report') loadThreads();
+    }
+
+    document.querySelectorAll('.tab').forEach((button) => {
+      button.onclick = () => showTab(button.dataset.tab);
+    });
+    let savedTab = 'workplace';
+    try { savedTab = localStorage.getItem('scraper.tab') || 'workplace'; } catch (e) { /* private mode */ }
+    showTab(savedTab);
 
     refresh();
+    loadPrefs().catch((e) => show(e.message, false));
+    let savedMode = 'manual';
+    try { savedMode = localStorage.getItem('scraper.mode') || 'manual'; } catch (e) { /* private mode */ }
+    setMode(savedMode);
     setInterval(() => { if (panelOpen) refresh(); }, 5000);
   </script>
 </body>

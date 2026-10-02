@@ -14,6 +14,8 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import auto
+import reports
 import scrape
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -23,6 +25,12 @@ STATE_FILE = os.path.join(HERE, 'state.json')
 VOLLNA_LOGIN = 'https://www.vollna.com/login'
 VOLLNA_DASHBOARD = 'https://www.vollna.com/dashboard'
 PORT = int(os.environ.get('SCRAPER_PORT', '8787'))
+
+# What can be pulled off a page, what is pulled by default, and what is sent on by default.
+ITEMS = ['Job title', 'Job link', 'Job description', 'Project info', 'Client info',
+         'Work history', 'Client name']
+DEFAULT_EXTRACT = ['Job title', 'Job link', 'Job description', 'Project info', 'Client info']
+DEFAULT_SEND = ['Job title', 'Job link', 'Job description']
 
 # name -> {"state": "ready" | "waiting", "proc": Popen or None, "url": str, "check": dict}
 sessions = {}
@@ -58,6 +66,13 @@ def save_check(name, check):
 
 def load_checks():
     return load_state().get('checks', {})
+
+
+def preferences():
+    state = load_state()
+    extract = [i for i in state.get('extract', DEFAULT_EXTRACT) if i in ITEMS] or DEFAULT_EXTRACT
+    send = [i for i in state.get('send', DEFAULT_SEND) if i in ITEMS]
+    return {'items': ITEMS, 'extract': extract, 'send': send}
 
 
 def selected_session(names):
@@ -214,22 +229,33 @@ def needs_login(html):
     return any(sign in head for sign in ('sign in to', 'log in to', 'sign in with google'))
 
 
-def run_scrape(name, url, selector, wait, want_history=False):
+def run_scrape(name, url, selector, wait, extract=None):
     profile = profile_path(name)
     if not os.path.isdir(profile):
         return {'error': 'Session "%s" does not exist yet. Set it up first.' % name}
     # Reading a copy of the profile means an open login window is fine.
+    wanted = extract or preferences()['extract']
     html = scrape.chrome_dump(url, profile, wait * 1000, use_snapshot=True)
     result = scrape.result_from_html(html, url, {'textSelector': selector or None})
-    history = scrape.fetch_work_history(html, profile, wait * 1000) if want_history else None
+
+    # the client's name is read out of the work history, so that fetch is needed for either item
+    needs_history = 'Work history' in wanted or 'Client name' in wanted
+    history = scrape.fetch_work_history(html, profile, wait * 1000) if needs_history else None
+    name_found, mentions = scrape.client_name(history) if 'Client name' in wanted else (None, 0)
+
+    jobs = scrape.parse_vollna(html)
     payload = {
-        'history': history,
+        'extract': wanted,
+        'history': history if 'Work history' in wanted else None,
+        'clientName': {'name': name_found, 'mentions': mentions,
+                       'engine': 'spaCy' if scrape.spacy_model() else 'rules'}
+                      if 'Client name' in wanted else None,
         'title': result['title'],
         'url': url,
         'text': result['data']['text'],
-        'fields': scrape.parse_vollna(html),
-        'client': scrape.parse_client(html),
-        'project': scrape.parse_project(html),
+        'fields': {k: v for k, v in jobs.items() if k in wanted},
+        'client': scrape.parse_client(html) if 'Client info' in wanted else None,
+        'project': scrape.parse_project(html) if 'Project info' in wanted else None,
         'loginNeeded': needs_login(html),
         **scrape.page_context(html),
         'chars': len(result['data']['text']),
@@ -254,6 +280,31 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        if self.path.startswith('/api/reports/thread'):
+            from urllib.parse import parse_qs, urlparse
+            wanted = parse_qs(urlparse(self.path).query).get('id', [''])[0]
+            found = reports.thread(wanted)
+            if not found:
+                return self.send_json({'error': 'No such conversation.'}, 404)
+            return self.send_json({'thread': found})
+
+        if self.path.startswith('/api/reports'):
+            note = None
+            try:
+                reports.poll()                     # pick up anything the server sent
+            except RuntimeError as problem:
+                note = str(problem)                # show threads anyway when the relay is down
+            return self.send_json({'threads': reports.threads(), 'note': note,
+                                   'projectName': reports.project_name(),
+                                   'registered': reports.registered(),
+                                   'serverId': reports.load().get('serverId')})
+
+        if self.path.startswith('/api/auto'):
+            return self.send_json(auto.status())
+
+        if self.path.startswith('/api/prefs'):
+            return self.send_json(preferences())
+
         if self.path.startswith('/api/sessions'):
             listing = list_sessions()
             return self.send_json({'sessions': listing,
@@ -292,6 +343,31 @@ class Handler(BaseHTTPRequestHandler):
                 save_check(name, check)
                 return self.send_json({'sessions': list_sessions(), 'check': check})
 
+            if self.path == '/api/reports/message':
+                thread = reports.send((data.get('id') or '').strip(), (data.get('text') or '').strip())
+                return self.send_json({'thread': thread})
+
+            if self.path == '/api/reports/complete':
+                thread = reports.set_completed((data.get('id') or '').strip(),
+                                               bool(data.get('completed', True)))
+                return self.send_json({'thread': thread})
+
+            if self.path == '/api/reports/register':
+                url = (data.get('url') or '').strip()
+                if not url.startswith('http'):
+                    return self.send_json({'error': 'Give the server URL, starting with http.'}, 400)
+                return self.send_json({'thread': reports.register(url)})
+
+            if self.path == '/api/reports/again':
+                return self.send_json({'thread': reports.request_again((data.get('id') or '').strip())})
+
+            if self.path == '/api/reports/new':
+                text = (data.get('text') or '').strip()
+                if not text:
+                    return self.send_json({'error': 'Write something to send.'}, 400)
+                thread = reports.start((data.get('title') or '').strip(), text)
+                return self.send_json({'thread': thread})
+
             if self.path == '/api/session/open':
                 name = (data.get('name') or '').strip()
                 if not os.path.isdir(profile_path(name)):
@@ -305,6 +381,30 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({'error': 'No session called "%s".' % name}, 400)
                 open_login_window(name, VOLLNA_LOGIN)
                 return self.send_json({'sessions': list_sessions(), 'waiting': name})
+
+            if self.path == '/api/auto/start':
+                name = (data.get('session') or selected_session([s['name'] for s in list_sessions()]) or '').strip()
+                url = (data.get('url') or '').strip()
+                if not url.startswith('http'):
+                    return self.send_json({'error': 'Give the page URL to watch.'}, 400)
+                if not os.path.isdir(profile_path(name)):
+                    return self.send_json({'error': 'Session "%s" does not exist.' % name}, 400)
+                prefs = preferences()
+                return self.send_json(auto.start(url, name, profile_path(name),
+                                                 int(data.get('interval') or 120),
+                                                 prefs['extract'], prefs['send']))
+
+            if self.path == '/api/auto/stop':
+                return self.send_json(auto.stop())
+
+            if self.path == '/api/auto/forget':
+                return self.send_json(auto.forget())
+
+            if self.path == '/api/prefs':
+                keep = lambda names: [i for i in (names or []) if i in ITEMS]
+                save_state(extract=keep(data.get('extract')) or DEFAULT_EXTRACT,
+                           send=keep(data.get('send')))
+                return self.send_json(preferences())
 
             if self.path == '/api/session/select':
                 name = (data.get('name') or '').strip()
@@ -323,10 +423,12 @@ class Handler(BaseHTTPRequestHandler):
                                     (data.get('url') or '').strip(),
                                     (data.get('selector') or '').strip(),
                                     int(data.get('wait') or 20),
-                                    bool(data.get('history')))
+                                    data.get('extract'))
                 return self.send_json(result)
         except SystemExit as stop:          # scrape.py exits on Chrome problems
             return self.send_json({'error': str(stop)}, 500)
+        except RuntimeError as problem:     # relay trouble, bad conversation id, …
+            return self.send_json({'error': str(problem)}, 400)
         except Exception as problem:        # noqa: BLE001 - surface anything else in the UI
             return self.send_json({'error': '%s: %s' % (type(problem).__name__, problem)}, 500)
 

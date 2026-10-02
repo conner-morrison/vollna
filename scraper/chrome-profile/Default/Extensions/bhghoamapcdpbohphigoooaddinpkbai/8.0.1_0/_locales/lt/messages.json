@@ -1,0 +1,524 @@
+{
+   "about": {
+      "description": "About.",
+      "message": "Apie"
+   },
+   "account": {
+      "description": "Account.",
+      "message": "Paskyra"
+   },
+   "accountName": {
+      "description": "Account Name.",
+      "message": "Vartotojo vardas"
+   },
+   "activate_auto_filter": {
+      "message": "Warning: Smart filter loosely matches the domain name to an account. Always verify that you are on the correct website before entering a code!"
+   },
+   "add_code": {
+      "description": "Add account.",
+      "message": "Pridėti paskyrą"
+   },
+   "add_qr": {
+      "description": "Scan QR Code.",
+      "message": "Nuskaitykite QR kodą"
+   },
+   "add_secret": {
+      "description": "Manual Entry.",
+      "message": "Įvedimas rankiniu būdu"
+   },
+   "added": {
+      "description": "Added Account.",
+      "message": " buvo pridėtas."
+   },
+   "advanced": {
+      "message": "Išplėstiniai nustatymai"
+   },
+   "advisor": {
+      "message": "Patarėjas"
+   },
+   "advisor_insight_auto_fill_not_enabled": {
+      "message": "Galima įjungti automatinio pildymo funkciją, kad į svetaines būtų automatiškai įrašomi kodai."
+   },
+   "advisor_insight_auto_lock_not_set": {
+      "message": "Įjunkite automatinį užraktą, kad apsaugotumėte savo duomenis."
+   },
+   "advisor_insight_browser_sync_not_enabled": {
+      "message": "Naršyklės sinchronizavimas išjungtas. Įjungus šią funkciją, paskyros sinchronizuojamos visose naršyklėse."
+   },
+   "advisor_insight_password_not_set": {
+      "message": "Nustatykite slaptažodį duomenims apsaugoti."
+   },
+   "advisor_insight_smart_filter_not_enabled": {
+      "message": "Įjungus išmanųjį filtrą galima greitai pasiekti paskyras."
+   },
+   "algorithm": {
+      "message": "Algoritmas"
+   },
+   "autolock": {
+      "message": "Užrakinti po"
+   },
+   "backup": {
+      "message": "Atsarginė kopija"
+   },
+   "backup_file_info": {
+      "message": "Sukurkite atsarginę duomenų kopiją į failą."
+   },
+   "based_on_counter": {
+      "description": "Counter Based",
+      "message": "Skaičiuokle pagrįstas"
+   },
+   "based_on_time": {
+      "description": "Time Based",
+      "message": "Pagal laiką"
+   },
+   "browser_sync": {
+      "description": "Storage location",
+      "message": "Naršyklės sinchronizavimas"
+   },
+   "capture_failed": {
+      "description": "Capture Failed",
+      "message": "Užfiksuoti nepavyko, įkelkite puslapį iš naujo ir bandykite dar kartą."
+   },
+   "capture_local_file_failed": {
+      "description": "Import QR image backup instead of scan local image",
+      "message": "Ar bandote nuskaityti QR kodą iš vietinio failo? Vietoj to naudokite \"Import QR Image Backup\"."
+   },
+   "clock_too_far_off": {
+      "description": "Local Time is Too Far Off",
+      "message": "Dėmesio! Jūsų vietinis laikrodis yra per daug nutolęs, prieš tęsdami darbą jį pataisykite."
+   },
+   "close": {
+      "description": "Close.",
+      "message": "Uždaryti"
+   },
+   "confirm_delete": {
+      "description": "Remove entry confirmation",
+      "message": "Ar tikrai norite ištrinti paskyrą? Šio veiksmo anuliuoti negalima."
+   },
+   "confirm_delete_all": {
+      "description": "Message that user is required to acknowledge before clearing all data.",
+      "message": "Suprantu, kad visi mano duomenys bus negrįžtamai ištrinti."
+   },
+   "confirm_phrase": {
+      "description": "Confirm Passphrase.",
+      "message": "Patvirtinti slaptažodį"
+   },
+   "copied": {
+      "description": "Copied.",
+      "message": "Nukopijuota"
+   },
+   "current_phrase": {
+      "description": "Current Passphrase.",
+      "message": "Dabartinis slaptažodis"
+   },
+   "danger": {
+      "message": "Pavojus"
+   },
+   "delete_all": {
+      "message": "Iš naujo nustatyti autentifikatorių"
+   },
+   "delete_all_warning": {
+      "message": "Taip ištrinsite visus duomenis ir visiškai iš naujo nustatysite Autentifikatorių. Negalėsite atkurti jokių ištrintų duomenų! Prieš iš naujo nustatydami Autentifikatorių, turėtumėte išsaugoti atsarginę kopiją."
+   },
+   "digits": {
+      "message": "Skaitmenys"
+   },
+   "dismiss": {
+      "message": "Atmesti"
+   },
+   "download_backup": {
+      "description": "Download backup file.",
+      "message": "Atsisiųsti atsarginę kopiją"
+   },
+   "download_enc_backup": {
+      "description": "Download Encrypted Backup",
+      "message": "Atsisiųsti Slaptažodžiu apsaugotą atsarginę kopiją"
+   },
+   "dropbox_risk": {
+      "description": "Backup risk warning.",
+      "message": "Demesio: atsarginės kopijos yra nešifruojamos. Naudokite savo rizika."
+   },
+   "edit": {
+      "description": "Edit",
+      "message": "Redaguoti"
+   },
+   "enable_context_menu": {
+      "message": "Pridėti į kontekstinį meniu"
+   },
+   "encrypted": {
+      "description": "Encrypted.",
+      "message": "Užšifruotas"
+   },
+   "errorqr": {
+      "description": "QR Error.",
+      "message": "Neatpažintas QR kodas."
+   },
+   "errorsecret": {
+      "description": "Secret Error.",
+      "message": "Netinkama paskyros paslaptis"
+   },
+   "export_info": {
+      "description": "Export menu info text",
+      "message": "Įspėjimas: visos atsarginės kopijos yra nešifruojamos. Norite pridėti paskyrą prie kitos programos? Užveskite pelės žymeklį ant bet kurios paskyros viršutinės dešiniosios dalies ir paspauskite paslėptą mygtuką."
+   },
+   "extDesc": {
+      "description": "Extension Description.",
+      "message": "Autentifikatorius generuoja dviejų veiksnių autentifikavimo kodus naršyklėje."
+   },
+   "extName": {
+      "description": "Extension Name.",
+      "message": "Autentifikatorius"
+   },
+   "extShortName": {
+      "description": "Extension Short Name.",
+      "message": "Autentifikatorius"
+   },
+   "feedback": {
+      "description": "Feedback.",
+      "message": "Atsiliepimai"
+   },
+   "import_backup": {
+      "description": "Import backup.",
+      "message": "Importuoti atsarginę kopiją"
+   },
+   "import_backup_code": {
+      "description": "Import backup code.",
+      "message": "Importuoti teksto atsarginę kopiją"
+   },
+   "import_backup_file": {
+      "description": "Import backup file.",
+      "message": "Importuoti atsarginę kopiją"
+   },
+   "import_backup_qr": {
+      "description": "Import qr image backup.",
+      "message": "Importuoti QR atvaizdo atsarginę kopiją"
+   },
+   "import_backup_qr_in_batches": {
+      "description": "You can select multiple image files to import backup in batches.",
+      "message": "Galite pasirinkti kelis failus importuoti atsarginę kopiją dalimis."
+   },
+   "import_backup_qr_partly_failed": {
+      "description": "Import successful, but some QR image cannot be recognized.",
+      "message": "Importas pavyko, tačiau kai kurių QR kodų nepavyko atpažinti."
+   },
+   "import_error_password": {
+      "description": "Error password warning when import backups.",
+      "message": "Norėdami importuoti atsargines kopijas, turite nurodyti tinkamą slaptažodį."
+   },
+   "import_otp_urls": {
+      "description": "Import OTP URLs. Shown as add account method.",
+      "message": "Import OTP URLs"
+   },
+   "import_qr_images": {
+      "description": "Import qr images. Shown as add account method.",
+      "message": "Import QR Images"
+   },
+   "info": {
+      "message": "Informacija"
+   },
+   "invalid": {
+      "message": "Neteisingas"
+   },
+   "issuer": {
+      "description": "Issuer.",
+      "message": "Emitentas"
+   },
+   "learn_more": {
+      "message": "Sužinokite daugiau"
+   },
+   "loading": {
+      "message": "Kraunasi..."
+   },
+   "local_passphrase_warning": {
+      "description": "localStorage password warning.",
+      "message": "Jūsų slaptažodis saugomas vietoje, nedelsdami jį pakeiskite saugumo meniu."
+   },
+   "lock": {
+      "description": "Lock accounts",
+      "message": "Užrakinti"
+   },
+   "log_out": {
+      "description": "Sign out of 3rd party storage services",
+      "message": "Atsijungti"
+   },
+   "manual_dropbox": {
+      "description": "Manual backup",
+      "message": "Rankinis atsarginis kopijavimas"
+   },
+   "migration_fail": {
+      "description": "Import migration data failed.",
+      "message": "Importuoti nepavyko. Jei migruojate duomenis iš \"Google Authenticator\", iš naujo eksportuokite duomenis iš \"Google Authenticator\" ir bandykite dar kartą."
+   },
+   "migration_partly_fail": {
+      "description": "Some migration data is broken.",
+      "message": "Kai kurie paskyros duomenys nebuvo sėkmingai importuoti."
+   },
+   "minutes": {
+      "message": "minučių"
+   },
+   "new_phrase": {
+      "description": "New Passphrase.",
+      "message": "Naujas slaptažodis"
+   },
+   "no": {
+      "description": "No.",
+      "message": "Ne"
+   },
+   "no_entires": {
+      "message": "Nėra rodomų paskyrų. Pridėkite pirmąją paskyrą dabar."
+   },
+   "no_insight_available": {
+      "message": "Įžvalgų nerasta, viskas atrodo gerai!"
+   },
+   "ok": {
+      "description": "OK.",
+      "message": "Ok"
+   },
+   "onedrive_business_perms": {
+      "message": "Kodėl verslo paskyroms reikia daugiau leidimų?"
+   },
+   "otp_backup_inform": {
+      "description": "Info text on import page",
+      "message": "Galite importuoti atsargines kopijas iš kai kurių kitų programų."
+   },
+   "otp_backup_learn": {
+      "description": "learn more link on import page. Placed after otp_backup_inform",
+      "message": "Sužinokite daugiau"
+   },
+   "otp_unsupported_warn": {
+      "description": "Warning if using account that is not supported by standard backup format.",
+      "message": "Turite vieną ar daugiau \"Steam\" arba \"Blizzard\" paskyrų. Neužšifruotoms atsarginėms kopijoms nebus naudojamas standartinis atsarginių kopijų formatas."
+   },
+   "passphrase_info": {
+      "description": "Passphrase Info",
+      "message": "Įveskite slaptažodį, kad iššifruotumėte paskyros duomenis."
+   },
+   "password_policy_default_hint": {
+      "message": "Jūsų slaptažodis neatitinka jūsų organizacijos saugumo reikalavimų. Dėl papildomos informacijos kreipkitės į administratorių."
+   },
+   "period": {
+      "message": "Laikotarpis"
+   },
+   "permission_active_tab": {
+      "message": "Prieiga prie dabartinio skirtuko QR kodams nuskaityti."
+   },
+   "permission_alarms": {
+      "message": "Allows auto-lock to work."
+   },
+   "permission_clipboard_write": {
+      "message": "Suteikiama tik rašymo prieiga prie iškarpinės, kad, spustelėjus paskyrą, kodai būtų kopijuojami į iškarpinę."
+   },
+   "permission_context_menus": {
+      "message": "Į kontekstinį meniu įtraukiamas autentifikatorius."
+   },
+   "permission_drive": {
+      "message": "Leidžia kurti atsarginę kopiją \"Google\" diske."
+   },
+   "permission_drive_cannot_revoke": {
+      "message": "Pirmiausia turite išjungti \"Google Drive\" atsarginę kopiją."
+   },
+   "permission_dropbox": {
+      "message": "Leidžia kurti atsarginę kopiją į \"Dropbox\"."
+   },
+   "permission_dropbox_cannot_revoke": {
+      "message": "Pirmiausia turite išjungti \"Dropbox\" atsarginę kopiją."
+   },
+   "permission_identity": {
+      "message": "Leidžia prisijungti prie trečiosios šalies saugojimo paslaugų."
+   },
+   "permission_onedrive": {
+      "message": "Leidžia kurti atsarginę kopiją \"OneDrive\"."
+   },
+   "permission_onedrive_cannot_revoke": {
+      "message": "Pirmiausia turite išjungti \"OneDrive\" atsarginę kopiją."
+   },
+   "permission_required": {
+      "message": "Šis leidimas yra privalomas ir negali būti atšauktas."
+   },
+   "permission_revoke": {
+      "message": "Atimti"
+   },
+   "permission_scripting": {
+      "message": "Inject scripts into he current tab to scan QR codes and allow auto-fill to work."
+   },
+   "permission_show_required_permissions": {
+      "message": "Rodyti leidimus kurių negalima atšaukti"
+   },
+   "permission_storage": {
+      "message": "Prieiga prie naršyklės saugyklos, kurioje saugomi paskyros duomenys."
+   },
+   "permission_sync_clock": {
+      "message": "Leidžia sinchronizuoti laikrodį su \"Google\"."
+   },
+   "permission_unknown_permission": {
+      "message": "Nežinomas leidimas. Jei matote šį pranešimą, atsiųskite pranešimą apie klaidą."
+   },
+   "permissions": {
+      "message": "Leidimai"
+   },
+   "phrase": {
+      "description": "Passphrase.",
+      "message": "Slaptažodis"
+   },
+   "phrase_incorrect": {
+      "description": "Passphrase Incorrect.",
+      "message": "Negalite pridėti naujos paskyros, kol visos paskyros neiššifruotos. Prieš tęsdami įveskite teisingą slaptažodį."
+   },
+   "phrase_incorrect_export": {
+      "description": "Skip Unable-decripted Data.",
+      "message": "Paskyros, kurių nepavyko iššifruoti, nebus įtrauktos į šią atsarginę kopiją."
+   },
+   "phrase_not_match": {
+      "description": "Passphrase Not Match.",
+      "message": "Slaptažodis nesutampa."
+   },
+   "phrase_wrong": {
+      "message": "Password incorrect"
+   },
+   "popout": {
+      "description": "Make window turn into persistent popup",
+      "message": "Iššokančio lango režimas"
+   },
+   "remember_phrase": {
+      "description": "Remember Passphrase",
+      "message": "Įsiminti slaptažodį"
+   },
+   "remind_backup": {
+      "description": "Remind Backup",
+      "message": "Ar turite atsarginę paskyros kopiją? Nelaukite, kol bus per vėlu!"
+   },
+   "remove": {
+      "description": "Remove password.",
+      "message": "Pašalinti"
+   },
+   "resize_popup_page": {
+      "description": "Popup Page Settings",
+      "message": "Nustatymai"
+   },
+   "scale": {
+      "description": "Scale",
+      "message": "Skalė"
+   },
+   "search": {
+      "description": "Search",
+      "message": "Paieška"
+   },
+   "secret": {
+      "description": "Secret.",
+      "message": "Paslaptis"
+   },
+   "security": {
+      "description": "Security.",
+      "message": "Saugumas"
+   },
+   "security_warning": {
+      "description": "Passphrase Warning.",
+      "message": "Šis slaptažodis bus naudojamas jūsų paskyroms šifruoti. Jei slaptažodį pamiršite, niekas jums nepadės."
+   },
+   "settings": {
+      "description": "Settings.",
+      "message": "Nustatymai"
+   },
+   "show_all_entries": {
+      "description": "Show all entries.",
+      "message": "Rodyti visus įrašus"
+   },
+   "show_all_insights": {
+      "message": "Rodyti visas įžvalgas."
+   },
+   "sign_in": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "Prisijungti"
+   },
+   "sign_in_business": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "Prisijungti (verslas)"
+   },
+   "smart_filter": {
+      "message": "Išmanusis filtras"
+   },
+   "source": {
+      "description": "Source Code.",
+      "message": "Programinis kodas"
+   },
+   "storage_sync_info": {
+      "description": "3rd party backup info",
+      "message": "Automatiškai kurkite atsargines duomenų kopijas į trečiųjų šalių saugojimo paslaugas."
+   },
+   "sync_clock": {
+      "description": "Sync Clock",
+      "message": "Laikrodžio sinchronizavimas su \"Google"
+   },
+   "theme": {
+      "description": "Theme",
+      "message": "Tema"
+   },
+   "theme_compact": {
+      "description": "Compact theme",
+      "message": "Kompaktiškas"
+   },
+   "theme_dark": {
+      "description": "Dark theme",
+      "message": "Tamsus"
+   },
+   "theme_flat": {
+      "description": "Flat theme",
+      "message": "Plokščias"
+   },
+   "theme_high_contrast": {
+      "description": "High Contrast theme",
+      "message": "Didelis kontrastas"
+   },
+   "theme_light": {
+      "description": "Light theme",
+      "message": "Šviesa"
+   },
+   "theme_simple": {
+      "description": "Simple theme",
+      "message": "Paprastas"
+   },
+   "token_revoked": {
+      "description": "Error authenticating to backup service. $SERVICE$ will be replaced with a proper noun (E.g.: 'Google Drive' or 'Dropbox')",
+      "message": "Kilo problema jungiantis prie jūsų $SERVICE$ paskyros, bandykite dar kartą.",
+      "placeholders": {
+         "service": {
+            "content": "$1",
+            "example": "Google Drive"
+         }
+      }
+   },
+   "translate": {
+      "description": "Translate.",
+      "message": "Versti"
+   },
+   "type": {
+      "message": "Tipas"
+   },
+   "update": {
+      "description": "Update.",
+      "message": "Atnaujinti"
+   },
+   "updateFailure": {
+      "description": "Update Failure.",
+      "message": "Klaida."
+   },
+   "updateSuccess": {
+      "description": "Update Success.",
+      "message": "Pavyko."
+   },
+   "use_autofill": {
+      "description": "Use Autofill",
+      "message": "Naudoti automatinį pildymą"
+   },
+   "use_high_contrast": {
+      "description": "Use High Contrast",
+      "message": "Naudokite didelį kontrastą"
+   },
+   "warning": {
+      "message": "Dėmesio"
+   },
+   "yes": {
+      "description": "Yes.",
+      "message": "Taip"
+   }
+}

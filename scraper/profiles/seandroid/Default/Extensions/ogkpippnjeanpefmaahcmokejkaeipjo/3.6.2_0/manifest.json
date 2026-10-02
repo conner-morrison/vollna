@@ -1,0 +1,38 @@
+{
+   "action": {
+   },
+   "background": {
+      "service_worker": "background.js"
+   },
+   "content_scripts": [ {
+      "js": [ "content_script.js", "inject.js" ],
+      "matches": [ "https://upwork.com/*", "https://www.upwork.com/*", "https://www.vollna.com/*" ],
+      "run_at": "document_start"
+   }, {
+      "js": [ "profile_inject.js" ],
+      "matches": [ "https://www.upwork.com/freelancers/*" ],
+      "run_at": "document_start"
+   } ],
+   "description": "Automate Upwork Bidding with AI, job filters, instant alerts, autofill proposals, A/B test cover letters, & comprehensive analytics",
+   "externally_connectable": {
+      "ids": [ "mekfbokliigikmolhcoecncgckhbmimj" ],
+      "matches": [ "https://*.upwork.com/*", "https://www.vollna.com/*" ]
+   },
+   "host_permissions": [ "*://upwork.com/*", "*://*.upwork.com/*", "https://www.vollna.com/*" ],
+   "icons": {
+      "128": "icons/128x.png",
+      "16": "icons/16x.png",
+      "32": "icons/32x.png",
+      "48": "icons/48x.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvl/JjOHjm8VjdEqbsvRt9et7D0dZoGYJeJ9ln/unzy9EvGuVhIsamGKgXHRQliVwrtLntYn4hnTJaogQzYHTAKv/bezkLap0+jSI3B7NMg3jMwp1DtwFGcwl1W6wIg3SSqZDrMtkrwFFVFQghXC0hvoDIDxR9iidIpGfWkgxp62uD+hpXl2NLSchvhnUUlrq2Sz0bzI4H1w92ImNiYIxNeYu9actMrzYpM/xZK390sB8k5bClCAT9s5fLkujCEl1OoavITKf2loXd7YsHh63tqFqGmLQWuEkh5C5+AO2yPuJlJnPCi+WbGmBGP4a/tPmoG9Kb/SH49FzydqepT95wQIDAQAB",
+   "manifest_version": 3,
+   "name": "Upwork Copilot - AI Proposals, Filters, Instant Alerts, auto-bidding",
+   "permissions": [ "cookies", "storage", "tabs", "activeTab" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "3.6.2",
+   "web_accessible_resources": [ {
+      "matches": [ "https://www.vollna.com/*", "https://upwork.com/*", "https://*.upwork.com/*" ],
+      "resources": [ "injected.js", "b_index.js", "styles/b_index.css", "profile_sync.js" ]
+   } ]
+}

@@ -1,0 +1,524 @@
+{
+   "about": {
+      "description": "About.",
+      "message": "अबाउट"
+   },
+   "account": {
+      "description": "Account.",
+      "message": "खाता"
+   },
+   "accountName": {
+      "description": "Account Name.",
+      "message": "उपयोगकर्ता नाम"
+   },
+   "activate_auto_filter": {
+      "message": "Warning: Smart filter loosely matches the domain name to an account. Always verify that you are on the correct website before entering a code!"
+   },
+   "add_code": {
+      "description": "Add account.",
+      "message": "खाता जोड़ो"
+   },
+   "add_qr": {
+      "description": "Scan QR Code.",
+      "message": "स्कैन \"क्यू-आर कोड\""
+   },
+   "add_secret": {
+      "description": "Manual Entry.",
+      "message": "हस्त प्रविष्टि"
+   },
+   "added": {
+      "description": "Added Account.",
+      "message": " जोड़ दिया गया है।"
+   },
+   "advanced": {
+      "message": "उन्नत"
+   },
+   "advisor": {
+      "message": "सलाहकार"
+   },
+   "advisor_insight_auto_fill_not_enabled": {
+      "message": "वेबसाइटों में स्वचालित रूप से कोड भरने के लिए स्वतः भरण को सक्षम किया जा सकता है।"
+   },
+   "advisor_insight_auto_lock_not_set": {
+      "message": "अपने डेटा की सुरक्षा के लिए ऑटो-लॉक सक्षम करें।"
+   },
+   "advisor_insight_browser_sync_not_enabled": {
+      "message": "ब्राउज़र सिंक अक्षम है। इसे सक्षम करने से खातों को सभी ब्राउज़रों में समन्वयित किया जा सकता है।"
+   },
+   "advisor_insight_password_not_set": {
+      "message": "अपने डेटा की सुरक्षा के लिए एक पासवर्ड सेट करें।"
+   },
+   "advisor_insight_smart_filter_not_enabled": {
+      "message": "स्मार्ट फ़िल्टर को सक्षम करने से खातों तक त्वरित पहुँच की अनुमति मिलती है।"
+   },
+   "algorithm": {
+      "message": "अल्गोरिथम"
+   },
+   "autolock": {
+      "message": "के बाद लॉक ऐप"
+   },
+   "backup": {
+      "message": "बैकअप"
+   },
+   "backup_file_info": {
+      "message": "एक फ़ाइल में अपने डेटा का बैकअप लें।"
+   },
+   "based_on_counter": {
+      "description": "Counter Based",
+      "message": "काउंटर पर आधारित"
+   },
+   "based_on_time": {
+      "description": "Time Based",
+      "message": "समय पर आधारित"
+   },
+   "browser_sync": {
+      "description": "Storage location",
+      "message": "ब्राउज़र सिंक"
+   },
+   "capture_failed": {
+      "description": "Capture Failed",
+      "message": "कैप्चर विफल, कृपया पृष्ठ को पुनः लोड करें और पुनः प्रयास करें।"
+   },
+   "capture_local_file_failed": {
+      "description": "Import QR image backup instead of scan local image",
+      "message": "क्या आप किसी स्थानीय फ़ाइल से QR कोड स्कैन करने का प्रयास कर रहे हैं? इसके बजाय आयात क्यूआर छवि बैकअप का उपयोग करें।"
+   },
+   "clock_too_far_off": {
+      "description": "Local Time is Too Far Off",
+      "message": "आपकी स्थानीय घड़ी बहुत दूर है, कृपया जारी रखने से पहले इसे ठीक कर लें।"
+   },
+   "close": {
+      "description": "Close.",
+      "message": "बंद"
+   },
+   "confirm_delete": {
+      "description": "Remove entry confirmation",
+      "message": "क्या आप वाकई इस खाते को हटाना चाहते हैं? इस एक्शन को वापस नहीं किया जा सकता।"
+   },
+   "confirm_delete_all": {
+      "description": "Message that user is required to acknowledge before clearing all data.",
+      "message": "मैं समझता/समझती हूं कि मेरा सारा डेटा अपरिवर्तनीय रूप से हटा दिया जाएगा।"
+   },
+   "confirm_phrase": {
+      "description": "Confirm Passphrase.",
+      "message": "पासवर्ड की पुष्टि करें"
+   },
+   "copied": {
+      "description": "Copied.",
+      "message": "कॉपीड"
+   },
+   "current_phrase": {
+      "description": "Current Passphrase.",
+      "message": "वर्तमान पासवर्ड"
+   },
+   "danger": {
+      "message": "खतरा"
+   },
+   "delete_all": {
+      "message": "प्रमाणक रीसेट करें"
+   },
+   "delete_all_warning": {
+      "message": "यह आपके सभी डेटा को हटा देगा और प्रमाणक को पूरी तरह से रीसेट कर देगा। आप किसी भी हटाए गए डेटा को पुनर्प्राप्त नहीं कर पाएंगे! प्रमाणक को रीसेट करने से पहले आपको एक बैकअप सहेजने पर विचार करना चाहिए।"
+   },
+   "digits": {
+      "message": "अंक"
+   },
+   "dismiss": {
+      "message": "खारिज"
+   },
+   "download_backup": {
+      "description": "Download backup file.",
+      "message": "बैकअप डाउनलोड करें"
+   },
+   "download_enc_backup": {
+      "description": "Download Encrypted Backup",
+      "message": "पासवर्ड से सुरक्षित बैकअप डाउनलोड करें"
+   },
+   "dropbox_risk": {
+      "description": "Backup risk warning.",
+      "message": "चेतावनी: बैकअप अनएन्क्रिप्टेड हैं। अपने जोखिम पार इस्तेमाल करें।"
+   },
+   "edit": {
+      "description": "Edit",
+      "message": "संपादित"
+   },
+   "enable_context_menu": {
+      "message": "प्रसंग मेनू में जोड़ें"
+   },
+   "encrypted": {
+      "description": "Encrypted.",
+      "message": "गोपित"
+   },
+   "errorqr": {
+      "description": "QR Error.",
+      "message": "अपरिचित \"क्यूआर कोड\"।"
+   },
+   "errorsecret": {
+      "description": "Secret Error.",
+      "message": "अमान्य \"खाता गुप्त\""
+   },
+   "export_info": {
+      "description": "Export menu info text",
+      "message": "चेतावनी: सभी बैकअप अनएन्क्रिप्टेड हैं। किसी अन्य ऐप में एक खाता जोड़ना चाहते हैं? किसी भी खाते के ऊपरी दाएं भाग पर होवर करें और छिपे हुए बटन को दबाएं।"
+   },
+   "extDesc": {
+      "description": "Extension Description.",
+      "message": "ऑथेंटिकेटर आपके ब्राउज़र में \"टू-फैक्टर ऑथेंटिकेशन\" कोड जेनरेट करता है।"
+   },
+   "extName": {
+      "description": "Extension Name.",
+      "message": "Authentication"
+   },
+   "extShortName": {
+      "description": "Extension Short Name.",
+      "message": "सत्यापन"
+   },
+   "feedback": {
+      "description": "Feedback.",
+      "message": "प्रतिपुष्टि"
+   },
+   "import_backup": {
+      "description": "Import backup.",
+      "message": "बैकअप आयात करें"
+   },
+   "import_backup_code": {
+      "description": "Import backup code.",
+      "message": "टेक्स्ट बैकअप आयात करें"
+   },
+   "import_backup_file": {
+      "description": "Import backup file.",
+      "message": "बैकअप फ़ाइल आयात करें"
+   },
+   "import_backup_qr": {
+      "description": "Import qr image backup.",
+      "message": "क्यूआर छवि बैकअप आयात करें"
+   },
+   "import_backup_qr_in_batches": {
+      "description": "You can select multiple image files to import backup in batches.",
+      "message": "आप बैचों में बैकअप आयात करने के लिए एकाधिक फ़ाइलों का चयन कर सकते हैं।"
+   },
+   "import_backup_qr_partly_failed": {
+      "description": "Import successful, but some QR image cannot be recognized.",
+      "message": "आयात सफल रहा, लेकिन कुछ क्यूआर कोड पहचाने नहीं जा सके।"
+   },
+   "import_error_password": {
+      "description": "Error password warning when import backups.",
+      "message": "बैकअप आयात करने के लिए आपको सही पासवर्ड प्रदान करना होगा।"
+   },
+   "import_otp_urls": {
+      "description": "Import OTP URLs. Shown as add account method.",
+      "message": "Import OTP URLs"
+   },
+   "import_qr_images": {
+      "description": "Import qr images. Shown as add account method.",
+      "message": "Import QR Images"
+   },
+   "info": {
+      "message": "जानकारी"
+   },
+   "invalid": {
+      "message": "अमान्य"
+   },
+   "issuer": {
+      "description": "Issuer.",
+      "message": "ज़ारीकर्ता"
+   },
+   "learn_more": {
+      "message": "और अधिक जानें"
+   },
+   "loading": {
+      "message": "लोड हो रहा है..."
+   },
+   "local_passphrase_warning": {
+      "description": "localStorage password warning.",
+      "message": "आपका पासवर्ड स्थानीय रूप से संग्रहीत है, कृपया इसे तुरंत सुरक्षा मेनू में बदलें।"
+   },
+   "lock": {
+      "description": "Lock accounts",
+      "message": "लॉक करें"
+   },
+   "log_out": {
+      "description": "Sign out of 3rd party storage services",
+      "message": "लॉगआउट"
+   },
+   "manual_dropbox": {
+      "description": "Manual backup",
+      "message": "मैनुअल बैकअप I"
+   },
+   "migration_fail": {
+      "description": "Import migration data failed.",
+      "message": "आयात विफल. यदि आप Google Authenticator से डेटा माइग्रेट कर रहे हैं, तो कृपया Google प्रमाणक से अपना डेटा पुनः निर्यात करें और पुनः प्रयास करें।"
+   },
+   "migration_partly_fail": {
+      "description": "Some migration data is broken.",
+      "message": "कुछ खाता डेटा सफलतापूर्वक आयात नहीं किया गया था।"
+   },
+   "minutes": {
+      "message": "मिनट"
+   },
+   "new_phrase": {
+      "description": "New Passphrase.",
+      "message": "नया पासवर्ड"
+   },
+   "no": {
+      "description": "No.",
+      "message": "नहीं"
+   },
+   "no_entires": {
+      "message": "प्रदर्शित करने के लिए कोई खाता नहीं है। अपना पहला खाता अभी जोड़ें।"
+   },
+   "no_insight_available": {
+      "message": "कोई अंतर्दृष्टि नहीं मिली, सब कुछ अच्छा लग रहा है!"
+   },
+   "ok": {
+      "description": "OK.",
+      "message": "ठीक"
+   },
+   "onedrive_business_perms": {
+      "message": "व्यावसायिक खातों को अधिक अनुमतियों की आवश्यकता क्यों होती है?"
+   },
+   "otp_backup_inform": {
+      "description": "Info text on import page",
+      "message": "आप कुछ अन्य एप्लिकेशन से बैकअप आयात कर सकते हैं।"
+   },
+   "otp_backup_learn": {
+      "description": "learn more link on import page. Placed after otp_backup_inform",
+      "message": "और अधिक जानें"
+   },
+   "otp_unsupported_warn": {
+      "description": "Warning if using account that is not supported by standard backup format.",
+      "message": "आपके पास एक या अधिक स्टीम या बर्फ़ीला तूफ़ान खाते हैं। अनएन्क्रिप्टेड बैकअप मानकीकृत बैकअप प्रारूप का उपयोग नहीं करेंगे।"
+   },
+   "passphrase_info": {
+      "description": "Passphrase Info",
+      "message": "खाता डेटा डिक्रिप्ट करने के लिए पासवर्ड दर्ज करें।"
+   },
+   "password_policy_default_hint": {
+      "message": "आपका पासवर्ड आपके संगठन की सुरक्षा आवश्यकताओं को पूरा नहीं करता है। अधिक जानकारी के लिए अपने व्यवस्थापक से संपर्क करें।"
+   },
+   "period": {
+      "message": "अवधि"
+   },
+   "permission_active_tab": {
+      "message": "क्यूआर कोड स्कैन करने के लिए वर्तमान टैब तक पहुंचें।"
+   },
+   "permission_alarms": {
+      "message": "Allows auto-lock to work."
+   },
+   "permission_clipboard_write": {
+      "message": "जब आप खाते पर क्लिक करते हैं तो कोड को क्लिपबोर्ड पर कॉपी करने के लिए क्लिपबोर्ड पर केवल-लिखने की पहुंच प्रदान करता है।"
+   },
+   "permission_context_menus": {
+      "message": "संदर्भ मेनू में प्रमाणक जोड़ता है।"
+   },
+   "permission_drive": {
+      "message": "Google Drive पर बैकअप की अनुमति देता है।"
+   },
+   "permission_drive_cannot_revoke": {
+      "message": "आपको पहले Google Drive बैकअप को अक्षम करना होगा।"
+   },
+   "permission_dropbox": {
+      "message": "Dropbox बैकअप की अनुमति देता है"
+   },
+   "permission_dropbox_cannot_revoke": {
+      "message": "आपको पहले Dropbox बैकअप को अक्षम करना होगा।"
+   },
+   "permission_identity": {
+      "message": "तृतीय पक्ष संग्रहण सेवाओं में साइन इन करने की अनुमति देता है।"
+   },
+   "permission_onedrive": {
+      "message": "OneDrive पर बैकअप की अनुमति देता है।"
+   },
+   "permission_onedrive_cannot_revoke": {
+      "message": "आपको पहले OneDrive बैकअप को अक्षम करना होगा।"
+   },
+   "permission_required": {
+      "message": "यह एक आवश्यक अनुमति है और इसे निरस्त नहीं किया जा सकता है।"
+   },
+   "permission_revoke": {
+      "message": "रद्द करना"
+   },
+   "permission_scripting": {
+      "message": "Inject scripts into he current tab to scan QR codes and allow auto-fill to work."
+   },
+   "permission_show_required_permissions": {
+      "message": "गैर-प्रतिसंहरणीय अनुमतियां दिखाएं"
+   },
+   "permission_storage": {
+      "message": "खाता डेटा संग्रहीत करने के लिए ब्राउज़र संग्रहण तक पहुंच।"
+   },
+   "permission_sync_clock": {
+      "message": "घड़ी को Google के साथ सिंक करने की अनुमति देता है।"
+   },
+   "permission_unknown_permission": {
+      "message": "अज्ञात अनुमति। यदि आप यह संदेश देखते हैं, तो कृपया एक बग रिपोर्ट भेजें।"
+   },
+   "permissions": {
+      "message": "अनुमतियां"
+   },
+   "phrase": {
+      "description": "Passphrase.",
+      "message": "पासवर्ड"
+   },
+   "phrase_incorrect": {
+      "description": "Passphrase Incorrect.",
+      "message": "जब तक सभी खाते डिक्रिप्ट नहीं हो जाते, तब तक आप एक नया खाता नहीं जोड़ सकते। जारी रखने से पहले कृपया सही पासवर्ड दर्ज करें।"
+   },
+   "phrase_incorrect_export": {
+      "description": "Skip Unable-decripted Data.",
+      "message": "जिन खातों को डिक्रिप्ट नहीं किया जा सका था, उन्हें इस बैकअप में शामिल नहीं किया जाएगा।"
+   },
+   "phrase_not_match": {
+      "description": "Passphrase Not Match.",
+      "message": "गलत पासवर्ड"
+   },
+   "phrase_wrong": {
+      "message": "Password incorrect"
+   },
+   "popout": {
+      "description": "Make window turn into persistent popup",
+      "message": "पॉप अप मोड"
+   },
+   "remember_phrase": {
+      "description": "Remember Passphrase",
+      "message": "पासवर्ड याद रखें"
+   },
+   "remind_backup": {
+      "description": "Remind Backup",
+      "message": "क्या आपके पास अपने खातों का बैकअप है?"
+   },
+   "remove": {
+      "description": "Remove password.",
+      "message": "हटाएं"
+   },
+   "resize_popup_page": {
+      "description": "Popup Page Settings",
+      "message": "प्राथमिकताएं"
+   },
+   "scale": {
+      "description": "Scale",
+      "message": "परिमाण"
+   },
+   "search": {
+      "description": "Search",
+      "message": "खोजें"
+   },
+   "secret": {
+      "description": "Secret.",
+      "message": "रहस्य"
+   },
+   "security": {
+      "description": "Security.",
+      "message": "सुरक्षा"
+   },
+   "security_warning": {
+      "description": "Passphrase Warning.",
+      "message": "इस पासवर्ड का उपयोग आपके खातों को एन्क्रिप्ट करने के लिए किया जाएगा। अगर आप पासवर्ड भूल जाते हैं तो कोई आपकी मदद नहीं कर सकता।"
+   },
+   "settings": {
+      "description": "Settings.",
+      "message": "सेटिंग्स"
+   },
+   "show_all_entries": {
+      "description": "Show all entries.",
+      "message": "सभी प्रविष्टियाँ दिखाएँ"
+   },
+   "show_all_insights": {
+      "message": "सभी अंतर्दृष्टि दिखाएं।"
+   },
+   "sign_in": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "अंदर आएं"
+   },
+   "sign_in_business": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "साइन इन करें (व्यवसाय)"
+   },
+   "smart_filter": {
+      "message": "स्मार्ट फ़िल्टर"
+   },
+   "source": {
+      "description": "Source Code.",
+      "message": "सोर्स कोड"
+   },
+   "storage_sync_info": {
+      "description": "3rd party backup info",
+      "message": "अपने डेटा को तृतीय पक्ष संग्रहण सेवाओं में स्वचालित रूप से बैकअप लें।"
+   },
+   "sync_clock": {
+      "description": "Sync Clock",
+      "message": "घड़ी को Google के साथ सिंक करें"
+   },
+   "theme": {
+      "description": "Theme",
+      "message": "थीम"
+   },
+   "theme_compact": {
+      "description": "Compact theme",
+      "message": "सघन"
+   },
+   "theme_dark": {
+      "description": "Dark theme",
+      "message": "डार्क"
+   },
+   "theme_flat": {
+      "description": "Flat theme",
+      "message": "सपाट"
+   },
+   "theme_high_contrast": {
+      "description": "High Contrast theme",
+      "message": "अधिक कंट्रास्ट"
+   },
+   "theme_light": {
+      "description": "Light theme",
+      "message": "हल्की"
+   },
+   "theme_simple": {
+      "description": "Simple theme",
+      "message": "सरल"
+   },
+   "token_revoked": {
+      "description": "Error authenticating to backup service. $SERVICE$ will be replaced with a proper noun (E.g.: 'Google Drive' or 'Dropbox')",
+      "message": "आपके $SERVICE$ खाते से कनेक्ट होने में एक समस्या थी, कृपया फिर से साइन इन करें।",
+      "placeholders": {
+         "service": {
+            "content": "$1",
+            "example": "Google Drive"
+         }
+      }
+   },
+   "translate": {
+      "description": "Translate.",
+      "message": "अनुवाद करें"
+   },
+   "type": {
+      "message": "प्रकार"
+   },
+   "update": {
+      "description": "Update.",
+      "message": "अपडेट करें"
+   },
+   "updateFailure": {
+      "description": "Update Failure.",
+      "message": "विफलता"
+   },
+   "updateSuccess": {
+      "description": "Update Success.",
+      "message": "सफलता"
+   },
+   "use_autofill": {
+      "description": "Use Autofill",
+      "message": "स्वतः भरण का उपयोग करें"
+   },
+   "use_high_contrast": {
+      "description": "Use High Contrast",
+      "message": "अधिक कंट्रास्ट"
+   },
+   "warning": {
+      "message": "चेतावनी"
+   },
+   "yes": {
+      "description": "Yes.",
+      "message": "हां"
+   }
+}

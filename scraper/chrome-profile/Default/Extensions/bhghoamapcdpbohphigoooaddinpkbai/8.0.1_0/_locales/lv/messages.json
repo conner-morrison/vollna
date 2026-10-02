@@ -1,0 +1,524 @@
+{
+   "about": {
+      "description": "About.",
+      "message": "Par"
+   },
+   "account": {
+      "description": "Account.",
+      "message": "Konts"
+   },
+   "accountName": {
+      "description": "Account Name.",
+      "message": "Lietotājvārds"
+   },
+   "activate_auto_filter": {
+      "message": "Warning: Smart filter loosely matches the domain name to an account. Always verify that you are on the correct website before entering a code!"
+   },
+   "add_code": {
+      "description": "Add account.",
+      "message": "Pievienot kontu"
+   },
+   "add_qr": {
+      "description": "Scan QR Code.",
+      "message": "Nolasīt kvadrātkodu (QR kodu)"
+   },
+   "add_secret": {
+      "description": "Manual Entry.",
+      "message": "Manuāla ievadīšana"
+   },
+   "added": {
+      "description": "Added Account.",
+      "message": " tika pievienots(a)."
+   },
+   "advanced": {
+      "message": "Papildu"
+   },
+   "advisor": {
+      "message": "Padomdevējs"
+   },
+   "advisor_insight_auto_fill_not_enabled": {
+      "message": "Var iespējot automātisko aizpildīšanu, lai automātiski ievadītu kodus vietnēs."
+   },
+   "advisor_insight_auto_lock_not_set": {
+      "message": "Iespējojiet automātisko aizslēgšanu, lai aizsargātu savus datus."
+   },
+   "advisor_insight_browser_sync_not_enabled": {
+      "message": "Pārlūkprogrammas sinhronizēšana ir atspējota. Iespējojot to, kontus var sinhronizēt dažādās pārlūkprogrammās."
+   },
+   "advisor_insight_password_not_set": {
+      "message": "Iestatīt paroli, lai aizsargātu datus."
+   },
+   "advisor_insight_smart_filter_not_enabled": {
+      "message": "Viedā filtra iespējošana ļauj ātri piekļūt kontiem."
+   },
+   "algorithm": {
+      "message": "Algoritms"
+   },
+   "autolock": {
+      "message": "Aizslēgt pēc"
+   },
+   "backup": {
+      "message": "Rezerves kopija"
+   },
+   "backup_file_info": {
+      "message": "Izveidot datu rezerves kopiju failā."
+   },
+   "based_on_counter": {
+      "description": "Counter Based",
+      "message": "Skaitītāja balstīts"
+   },
+   "based_on_time": {
+      "description": "Time Based",
+      "message": "Laika balstīts"
+   },
+   "browser_sync": {
+      "description": "Storage location",
+      "message": "Pārlūkprogrammas sinhronizēšana"
+   },
+   "capture_failed": {
+      "description": "Capture Failed",
+      "message": "Neizdevās notvert. Lūdzu, atkārtoti ielādējiet lapu un mēģiniet vēlreiz."
+   },
+   "capture_local_file_failed": {
+      "description": "Import QR image backup instead of scan local image",
+      "message": "Vai mēģināt nolasīt kvadrātkodu (QR kodu) no lokāla faila? Tā vietā izmantojiet Importēt kvadrātkoda (QR) attēla rezerves kopiju."
+   },
+   "clock_too_far_off": {
+      "description": "Local Time is Too Far Off",
+      "message": "Uzmanību bīstami! Jūsu vietējais laiks ir ar pārāk lielu laika nobīdi. Lūdzu, sinhronizējiet laiku ar kādu laika serveri, pirms turpināt."
+   },
+   "close": {
+      "description": "Close.",
+      "message": "Aizvērt"
+   },
+   "confirm_delete": {
+      "description": "Remove entry confirmation",
+      "message": "Vai tiešām vēlaties dzēst šo kontu? Šo darbību nevarēs atsaukt."
+   },
+   "confirm_delete_all": {
+      "description": "Message that user is required to acknowledge before clearing all data.",
+      "message": "Es saprotu, ka visi mani dati tiks neatgriezeniski dzēsti."
+   },
+   "confirm_phrase": {
+      "description": "Confirm Passphrase.",
+      "message": "Apstiprināt paroli"
+   },
+   "copied": {
+      "description": "Copied.",
+      "message": "Nokopēts"
+   },
+   "current_phrase": {
+      "description": "Current Passphrase.",
+      "message": "Pašreizējā parole"
+   },
+   "danger": {
+      "message": "Bīstami"
+   },
+   "delete_all": {
+      "message": "Atiestatīt Divpakāpju kodu ģeneratoru"
+   },
+   "delete_all_warning": {
+      "message": "Tiks dzēsti visi jūsu dati un pilnībā tiks atiestatīts Divpakāpju kodu ģenerators. Jūs nevarēsiet atgūt izdzēstos datus! Pirms Divpakāpju kodu ģeneratora atiestatīšanas apsveriet iespēju veikt rezerves kopiju."
+   },
+   "digits": {
+      "message": "Cipari"
+   },
+   "dismiss": {
+      "message": "Ignorēt"
+   },
+   "download_backup": {
+      "description": "Download backup file.",
+      "message": "Saglabāt rezerves kopijas failu"
+   },
+   "download_enc_backup": {
+      "description": "Download Encrypted Backup",
+      "message": "Lejupielādēt rezerves kopiju aizsargātu ar paroli"
+   },
+   "dropbox_risk": {
+      "description": "Backup risk warning.",
+      "message": "Brīdinājums: rezerves kopijas nav šifrētas. Izmantojiet uz pašu atbildības."
+   },
+   "edit": {
+      "description": "Edit",
+      "message": "Rediģēt"
+   },
+   "enable_context_menu": {
+      "message": "Pievienot konteksta izvēlnei"
+   },
+   "encrypted": {
+      "description": "Encrypted.",
+      "message": "Šifrēts"
+   },
+   "errorqr": {
+      "description": "QR Error.",
+      "message": "Neatpazīstams kvadrātkods (QR kods)."
+   },
+   "errorsecret": {
+      "description": "Secret Error.",
+      "message": "Konta slepenā atslēga nav derīga"
+   },
+   "export_info": {
+      "description": "Export menu info text",
+      "message": "Brīdinājums: visas rezerves kopijas ir nešifrētas. Vēlaties pievienot kontu citai programmai? Virziet kursoru virs jebkura konta augšējās labās daļas un nospiediet slēpto pogu."
+   },
+   "extDesc": {
+      "description": "Extension Description.",
+      "message": "Divpakāpju kodu ģenerators atvieglo darbu ar 2FA (divpakāpju) autentifikācijas kodu izveidošanu un aizpildīšanu jūsu pārlūkprogrammā"
+   },
+   "extName": {
+      "description": "Extension Name.",
+      "message": "Divpakāpju kodu ģenerators"
+   },
+   "extShortName": {
+      "description": "Extension Short Name.",
+      "message": "Divpakāpju kodu ģenerators"
+   },
+   "feedback": {
+      "description": "Feedback.",
+      "message": "Atsauksmes"
+   },
+   "import_backup": {
+      "description": "Import backup.",
+      "message": "Importēt rezerves kopiju"
+   },
+   "import_backup_code": {
+      "description": "Import backup code.",
+      "message": "Importēt teksta rezerves kopiju"
+   },
+   "import_backup_file": {
+      "description": "Import backup file.",
+      "message": "Importēt rezerves failu"
+   },
+   "import_backup_qr": {
+      "description": "Import qr image backup.",
+      "message": "Importēt kvadrātkoda (QR) attēla rezerves kopiju"
+   },
+   "import_backup_qr_in_batches": {
+      "description": "You can select multiple image files to import backup in batches.",
+      "message": "Variet atlasīt vairākus failus, lai importētu rezerves kopiju vienu pēc otra."
+   },
+   "import_backup_qr_partly_failed": {
+      "description": "Import successful, but some QR image cannot be recognized.",
+      "message": "Importēšana bija veiksmīga, taču dažus kvadrātkodus (QR kodus) nevarēja atpazīt."
+   },
+   "import_error_password": {
+      "description": "Error password warning when import backups.",
+      "message": "Lai importētu rezerves kopijas, ir jānorāda pareiza parole."
+   },
+   "import_otp_urls": {
+      "description": "Import OTP URLs. Shown as add account method.",
+      "message": "Import OTP URLs"
+   },
+   "import_qr_images": {
+      "description": "Import qr images. Shown as add account method.",
+      "message": "Import QR Images"
+   },
+   "info": {
+      "message": "Informācija"
+   },
+   "invalid": {
+      "message": "Nederīgs"
+   },
+   "issuer": {
+      "description": "Issuer.",
+      "message": "Izsniedzējs"
+   },
+   "learn_more": {
+      "message": "Uzzināt vairāk"
+   },
+   "loading": {
+      "message": "Ielādē..."
+   },
+   "local_passphrase_warning": {
+      "description": "localStorage password warning.",
+      "message": "Jūsu parole ir saglabāta lokāli, lūdzu, nekavējoties nomainiet to drošības izvēlnē."
+   },
+   "lock": {
+      "description": "Lock accounts",
+      "message": "Aizslēgt"
+   },
+   "log_out": {
+      "description": "Sign out of 3rd party storage services",
+      "message": "Iziet"
+   },
+   "manual_dropbox": {
+      "description": "Manual backup",
+      "message": "Manuāla dublēšana"
+   },
+   "migration_fail": {
+      "description": "Import migration data failed.",
+      "message": "Neizdevās importēt. Ja migrējat datus no Google Authenticator, lūdzu, atkārtoti eksportējiet datus no Google Authenticator un mēģiniet vēlreiz."
+   },
+   "migration_partly_fail": {
+      "description": "Some migration data is broken.",
+      "message": "Daži konta dati netika veiksmīgi importēti."
+   },
+   "minutes": {
+      "message": "minūtes(-ēm)"
+   },
+   "new_phrase": {
+      "description": "New Passphrase.",
+      "message": "Jaunā parole"
+   },
+   "no": {
+      "description": "No.",
+      "message": "Nē"
+   },
+   "no_entires": {
+      "message": "Nav kontu, ko parādīt. Pievienojiet savu pirmo kontu tūlīt."
+   },
+   "no_insight_available": {
+      "message": "Ieteikumi nav atrasti, viss ir kārtībā!"
+   },
+   "ok": {
+      "description": "OK.",
+      "message": "Labi"
+   },
+   "onedrive_business_perms": {
+      "message": "Kāpēc uzņēmumu kontiem ir nepieciešamas vairāk atļauju?"
+   },
+   "otp_backup_inform": {
+      "description": "Info text on import page",
+      "message": "Varat importēt rezerves kopijas no dažām citām programmām."
+   },
+   "otp_backup_learn": {
+      "description": "learn more link on import page. Placed after otp_backup_inform",
+      "message": "Uzzināt vairāk"
+   },
+   "otp_unsupported_warn": {
+      "description": "Warning if using account that is not supported by standard backup format.",
+      "message": "Jums ir viens vai vairāki Steam vai Blizzard konti. Nešifrētās rezerves kopijas neizmantos standartizēto rezerves kopijas formātu."
+   },
+   "passphrase_info": {
+      "description": "Passphrase Info",
+      "message": "Ievadiet paroli, lai atšifrētu konta datus."
+   },
+   "password_policy_default_hint": {
+      "message": "Jūsu parole neatbilst jūsu organizācijas drošības prasībām. Lai iegūtu papildinformāciju, sazinieties ar savu administratoru."
+   },
+   "period": {
+      "message": "Laika termiņš"
+   },
+   "permission_active_tab": {
+      "message": "Piekļuve pašreizējai cilnei, lai varētu nolasīt kvadrātkodus (QR kodus)."
+   },
+   "permission_alarms": {
+      "message": "Allows auto-lock to work."
+   },
+   "permission_clipboard_write": {
+      "message": "Piešķir tikai rakstīšanas piekļuvi starpliktuvei, lai varētu kopēt kodus starpliktuvē, kad noklikšķināt uz konta."
+   },
+   "permission_context_menus": {
+      "message": "Pievieno Divpakāpju kodu ģeneratoru konteksta izvēlnei."
+   },
+   "permission_drive": {
+      "message": "Atļauj veikt rezerves kopiju Google Drive."
+   },
+   "permission_drive_cannot_revoke": {
+      "message": "Jums vispirms ir jāatslēdz Google Drive rezerves kopija."
+   },
+   "permission_dropbox": {
+      "message": "Atļauj veikt rezerves kopiju Dropbox."
+   },
+   "permission_dropbox_cannot_revoke": {
+      "message": "Jums vispirms ir jāatslēdz Dropbox rezerves kopija."
+   },
+   "permission_identity": {
+      "message": "Ļauj autorizēties trešās puses krātuves pakalpojumos."
+   },
+   "permission_onedrive": {
+      "message": "Atļauj veikt rezerves kopiju OneDrive."
+   },
+   "permission_onedrive_cannot_revoke": {
+      "message": "Jums vispirms ir jāatslēdz OneDrive rezerves kopija."
+   },
+   "permission_required": {
+      "message": "Šī atļauja ir nepieciešama, un to nevar atsaukt."
+   },
+   "permission_revoke": {
+      "message": "Noņemt"
+   },
+   "permission_scripting": {
+      "message": "Inject scripts into he current tab to scan QR codes and allow auto-fill to work."
+   },
+   "permission_show_required_permissions": {
+      "message": "Rādīt neatsaucamās atļaujas"
+   },
+   "permission_storage": {
+      "message": "Piekļuve pārlūkprogrammas krātuvei, lai varētu saglabāt konta datus."
+   },
+   "permission_sync_clock": {
+      "message": "Atļauj sinhronizēt laiku ar Google."
+   },
+   "permission_unknown_permission": {
+      "message": "Nezināma atļauja. Ja redzat šo ziņojumu, lūdzu, nosūtiet kļūdu ziņojumu."
+   },
+   "permissions": {
+      "message": "Atļaujas"
+   },
+   "phrase": {
+      "description": "Passphrase.",
+      "message": "Parole"
+   },
+   "phrase_incorrect": {
+      "description": "Passphrase Incorrect.",
+      "message": "Jūs nevarat pievienot jaunu kontu, kamēr visi konti nav atšifrēti. Lai turpināt, lūdzu, ievadiet pareizo paroli."
+   },
+   "phrase_incorrect_export": {
+      "description": "Skip Unable-decripted Data.",
+      "message": "Konti, kurus nevarēja atšifrēt, netiks iekļauti šajā rezerves kopijā."
+   },
+   "phrase_not_match": {
+      "description": "Passphrase Not Match.",
+      "message": "Paroles nesakrīt."
+   },
+   "phrase_wrong": {
+      "message": "Password incorrect"
+   },
+   "popout": {
+      "description": "Make window turn into persistent popup",
+      "message": "Uznirstošais režīms"
+   },
+   "remember_phrase": {
+      "description": "Remember Passphrase",
+      "message": "Atcerēties paroli"
+   },
+   "remind_backup": {
+      "description": "Remind Backup",
+      "message": "Vai jums ir rezerves kopija jūsu kontiem? Negaidiet, kamēr būs par vēlu!"
+   },
+   "remove": {
+      "description": "Remove password.",
+      "message": "Dzēst"
+   },
+   "resize_popup_page": {
+      "description": "Popup Page Settings",
+      "message": "Iestatījumi"
+   },
+   "scale": {
+      "description": "Scale",
+      "message": "Mērogs"
+   },
+   "search": {
+      "description": "Search",
+      "message": "Meklēt"
+   },
+   "secret": {
+      "description": "Secret.",
+      "message": "Slepenā atslēga"
+   },
+   "security": {
+      "description": "Security.",
+      "message": "Drošība"
+   },
+   "security_warning": {
+      "description": "Passphrase Warning.",
+      "message": "Šī parole tiks izmantota jūsu kontu šifrēšanai. Neviens nevarēs jums palīdzēt, ja aizmirsīsiet paroli."
+   },
+   "settings": {
+      "description": "Settings.",
+      "message": "Iestatījumi"
+   },
+   "show_all_entries": {
+      "description": "Show all entries.",
+      "message": "Rādīt visus ierakstus"
+   },
+   "show_all_insights": {
+      "message": "Rādīt visus ieteikumus."
+   },
+   "sign_in": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "Autorizēties"
+   },
+   "sign_in_business": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "Autorizēties (Uzņēmuma)"
+   },
+   "smart_filter": {
+      "message": "Viedais filtrs"
+   },
+   "source": {
+      "description": "Source Code.",
+      "message": "Avota kods"
+   },
+   "storage_sync_info": {
+      "description": "3rd party backup info",
+      "message": "Automātiski veikt datu rezerves kopiju trešās puses krātuves pakalpojumos."
+   },
+   "sync_clock": {
+      "description": "Sync Clock",
+      "message": "Sinhronizēt laiku ar Google"
+   },
+   "theme": {
+      "description": "Theme",
+      "message": "Izskats"
+   },
+   "theme_compact": {
+      "description": "Compact theme",
+      "message": "Kompaktais"
+   },
+   "theme_dark": {
+      "description": "Dark theme",
+      "message": "Tumšais"
+   },
+   "theme_flat": {
+      "description": "Flat theme",
+      "message": "Plakanais"
+   },
+   "theme_high_contrast": {
+      "description": "High Contrast theme",
+      "message": "Spilgta kontrasta"
+   },
+   "theme_light": {
+      "description": "Light theme",
+      "message": "Gaišais"
+   },
+   "theme_simple": {
+      "description": "Simple theme",
+      "message": "Vienkāršais"
+   },
+   "token_revoked": {
+      "description": "Error authenticating to backup service. $SERVICE$ will be replaced with a proper noun (E.g.: 'Google Drive' or 'Dropbox')",
+      "message": "Radās problēma, veidojot savienojumu ar jūsu $SERVICE$ kontu. Lūdzu, autorizējieties vēlreiz.",
+      "placeholders": {
+         "service": {
+            "content": "$1",
+            "example": "Google Drive"
+         }
+      }
+   },
+   "translate": {
+      "description": "Translate.",
+      "message": "Tulkot"
+   },
+   "type": {
+      "message": "Tips"
+   },
+   "update": {
+      "description": "Update.",
+      "message": "Atjaunināt"
+   },
+   "updateFailure": {
+      "description": "Update Failure.",
+      "message": "Neizdevās paveikt."
+   },
+   "updateSuccess": {
+      "description": "Update Success.",
+      "message": "Veiksmīgi paveikts."
+   },
+   "use_autofill": {
+      "description": "Use Autofill",
+      "message": "Izmantot automātisko aizpildīšanu"
+   },
+   "use_high_contrast": {
+      "description": "Use High Contrast",
+      "message": "Izmantot spilgtu kontrastu"
+   },
+   "warning": {
+      "message": "Brīdinājums"
+   },
+   "yes": {
+      "description": "Yes.",
+      "message": "Jā"
+   }
+}

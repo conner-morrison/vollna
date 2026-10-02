@@ -1,0 +1,524 @@
+{
+   "about": {
+      "description": "About.",
+      "message": "შესახებ"
+   },
+   "account": {
+      "description": "Account.",
+      "message": "ანგარიში"
+   },
+   "accountName": {
+      "description": "Account Name.",
+      "message": "მომხმარებლის სახელი"
+   },
+   "activate_auto_filter": {
+      "message": "Warning: Smart filter loosely matches the domain name to an account. Always verify that you are on the correct website before entering a code!"
+   },
+   "add_code": {
+      "description": "Add account.",
+      "message": "ანგარიშის დამატება"
+   },
+   "add_qr": {
+      "description": "Scan QR Code.",
+      "message": "QR კოდის დასკანერება"
+   },
+   "add_secret": {
+      "description": "Manual Entry.",
+      "message": "ხელით ჩაწერა"
+   },
+   "added": {
+      "description": "Added Account.",
+      "message": " დაემატა."
+   },
+   "advanced": {
+      "message": "დამატებითი"
+   },
+   "advisor": {
+      "message": "მრჩეველი"
+   },
+   "advisor_insight_auto_fill_not_enabled": {
+      "message": "ავტომატური შევსების ჩართვა შესაძლებელია ვებსაიტებში კოდების ავტომატური შევსებისთვის."
+   },
+   "advisor_insight_auto_lock_not_set": {
+      "message": "ჩართეთ ავტომატური დაბლოკვა თქვენი მონაცემების დასაცავად."
+   },
+   "advisor_insight_browser_sync_not_enabled": {
+      "message": "ბრაუზერის სინქრონიზაცია გამორთულია. მისი ჩართვა საშუალებას იძლევა, მოხდეს ანგარიშების სინქრონიზაცია ბრაუზერებს შორის."
+   },
+   "advisor_insight_password_not_set": {
+      "message": "დააყენეთ პაროლი თქვენი მონაცემების დასაცავად."
+   },
+   "advisor_insight_smart_filter_not_enabled": {
+      "message": "ჭკვიანი ფილტრის ჩართვა საშუალებას გაძლევთ გქონდეთ სწრაფი წვდომა ანგარიშებზე."
+   },
+   "algorithm": {
+      "message": "ალგორითმი"
+   },
+   "autolock": {
+      "message": "დაბლოკვა"
+   },
+   "backup": {
+      "message": "სარეზერვო ასლი"
+   },
+   "backup_file_info": {
+      "message": "შექმენით თქვენი მონაცემების შემცველი სარეზერვო ასლის ფაილი."
+   },
+   "based_on_counter": {
+      "description": "Counter Based",
+      "message": "მრიცხველზე დაფუძნებული"
+   },
+   "based_on_time": {
+      "description": "Time Based",
+      "message": "დროზე დაფუძნებული"
+   },
+   "browser_sync": {
+      "description": "Storage location",
+      "message": "ბრაუზერის სინქრონიზაცია"
+   },
+   "capture_failed": {
+      "description": "Capture Failed",
+      "message": "გადაღება ვერ მოხერხდა, გთხოვთ, გადატვირთოთ გვერდი და სცადოთ ხელახლა."
+   },
+   "capture_local_file_failed": {
+      "description": "Import QR image backup instead of scan local image",
+      "message": "QR კოდის ლოკალური ფაილიდან დასკანერებას ცდილობთ? QR კოდის ლოკალური ფაილიდან დასკანერების ნაცვლად, გამოიყენეთ სარეზერვო QR სურათის იმპორტირება."
+   },
+   "clock_too_far_off": {
+      "description": "Local Time is Too Far Off",
+      "message": "ყურადღება! თქვენი ადგილობრივი დრო არასწორია. გაგრძელებამდე, გთხოვთ, გაასწოროთ საათი."
+   },
+   "close": {
+      "description": "Close.",
+      "message": "დახურვა"
+   },
+   "confirm_delete": {
+      "description": "Remove entry confirmation",
+      "message": "დარწმუნებული ხართ, რომ გსურთ ამ ანგარიშის წაშლა? ამ მოქმედების გაუქმება შეუძლებელია."
+   },
+   "confirm_delete_all": {
+      "description": "Message that user is required to acknowledge before clearing all data.",
+      "message": "მე მესმის, რომ ჩემი ყველა მონაცემი სამუდამოდ წაიშლება."
+   },
+   "confirm_phrase": {
+      "description": "Confirm Passphrase.",
+      "message": "დაადასტურეთ პაროლი"
+   },
+   "copied": {
+      "description": "Copied.",
+      "message": "დაკოპირებულია"
+   },
+   "current_phrase": {
+      "description": "Current Passphrase.",
+      "message": "მიმდინარე პაროლი"
+   },
+   "danger": {
+      "message": "საფრთხე"
+   },
+   "delete_all": {
+      "message": "აუთენთიფიკატორის აღდგენა"
+   },
+   "delete_all_warning": {
+      "message": "ეს მოქმედება წაშლის თქვენს ყველა მონაცემს და აღადგენს აუთენთიფიკატორის ყველა პარამეტრს. თქვენ ვერ შეძლებთ წაშლილი მონაცემების აღდგენას! აუთენთიფიკატორის აღდგენამდე, თქვენ უნდა შეინახოთ სარეზერვო ასლი."
+   },
+   "digits": {
+      "message": "ციფრები"
+   },
+   "dismiss": {
+      "message": "გაუქმება"
+   },
+   "download_backup": {
+      "description": "Download backup file.",
+      "message": "სარეზერვო ასლის ფაილის ჩამოტვირთვა"
+   },
+   "download_enc_backup": {
+      "description": "Download Encrypted Backup",
+      "message": "პაროლით დაშიფრული სარეზერვო ასლის ფაილის ჩამოტვირთვა"
+   },
+   "dropbox_risk": {
+      "description": "Backup risk warning.",
+      "message": "გაფრთხილება: სარეზერვო ასლები არ არის დაშიფრული. გამოიყენეთ საკუთარი რისკის ქვეშ."
+   },
+   "edit": {
+      "description": "Edit",
+      "message": "რედაქტირება"
+   },
+   "enable_context_menu": {
+      "message": "კონტექსტურ მენიუში დამატება"
+   },
+   "encrypted": {
+      "description": "Encrypted.",
+      "message": "დაშიფრულია"
+   },
+   "errorqr": {
+      "description": "QR Error.",
+      "message": "ამოუცნობი QR კოდი."
+   },
+   "errorsecret": {
+      "description": "Secret Error.",
+      "message": "არასწორი გასაღები"
+   },
+   "export_info": {
+      "description": "Export menu info text",
+      "message": "გაფრთხილება: ყველა სარეზერვო ასლი დაუშიფრავია. გსურთ ანგარიშის დამატება სხვა აპლიკაციაში? მაუსის კურსორი მიიტანეთ ნებისმიერი ანგარიშის ზედა მარჯვენა კუთხეში და დააჭირეთ დამალულ ღილაკს."
+   },
+   "extDesc": {
+      "description": "Extension Description.",
+      "message": "აუთენთიფიკატორი აგენერირებს ორფაქტორიან აუთენთიფიკაციის კოდებს თქვენს ბრაუზერში."
+   },
+   "extName": {
+      "description": "Extension Name.",
+      "message": "აუთენთიფიკატორი"
+   },
+   "extShortName": {
+      "description": "Extension Short Name.",
+      "message": "აუთენთიფიკატორი"
+   },
+   "feedback": {
+      "description": "Feedback.",
+      "message": "უკუკავშირი"
+   },
+   "import_backup": {
+      "description": "Import backup.",
+      "message": "სარეზერვო ასლის იმპორტირება"
+   },
+   "import_backup_code": {
+      "description": "Import backup code.",
+      "message": "ტექსტური სარეზერვო ასლის იმპორტირება"
+   },
+   "import_backup_file": {
+      "description": "Import backup file.",
+      "message": "სარეზერვო ფაილის იმპორტირება"
+   },
+   "import_backup_qr": {
+      "description": "Import qr image backup.",
+      "message": "სარეზერვო QR სურათის იმპორტირება"
+   },
+   "import_backup_qr_in_batches": {
+      "description": "You can select multiple image files to import backup in batches.",
+      "message": "სარეზერვო ასლების მასობრივი იმპორტირებისთვის, შეგიძლიათ აირჩიოთ რამდენიმე ფაილი."
+   },
+   "import_backup_qr_partly_failed": {
+      "description": "Import successful, but some QR image cannot be recognized.",
+      "message": "იმპორტირება წარმატებით დასრულდა, მაგრამ ზოგიერთი QR კოდის ამოცნობა ვერ მოხერხდა."
+   },
+   "import_error_password": {
+      "description": "Error password warning when import backups.",
+      "message": "სარეზერვო ასლების იმპორტირებისთვის, უნდა მიუთითოთ სწორი პაროლი."
+   },
+   "import_otp_urls": {
+      "description": "Import OTP URLs. Shown as add account method.",
+      "message": "OTP URL მისამართების იმპორტირება"
+   },
+   "import_qr_images": {
+      "description": "Import qr images. Shown as add account method.",
+      "message": "QR სურათების იმპორტირება"
+   },
+   "info": {
+      "message": "ინფორმაცია"
+   },
+   "invalid": {
+      "message": "არასწორი"
+   },
+   "issuer": {
+      "description": "Issuer.",
+      "message": "მომწოდებელი"
+   },
+   "learn_more": {
+      "message": "შეიტყვეთ მეტი"
+   },
+   "loading": {
+      "message": "იტვირთება..."
+   },
+   "local_passphrase_warning": {
+      "description": "localStorage password warning.",
+      "message": "თქვენი პაროლი შენახულია ლოკალურად. გთხოვთ, დაუყოვნებლივ შეცვალოთ პაროლის ადგილმდებარეობა უსაფრთხოების მენიუში."
+   },
+   "lock": {
+      "description": "Lock accounts",
+      "message": "დაბლოკვა"
+   },
+   "log_out": {
+      "description": "Sign out of 3rd party storage services",
+      "message": "გამოსვლა"
+   },
+   "manual_dropbox": {
+      "description": "Manual backup",
+      "message": "მექანიკური სარეზერვო ასლი"
+   },
+   "migration_fail": {
+      "description": "Import migration data failed.",
+      "message": "იმპორტირება ვერ მოხერხდა. თუ თქვენ მონაცემები Google აუთენთიფიკატორიდან გადაგაქვთ, გთხოვთ, ხელახლა მოახდინოთ მონაცემების ექსპორტი და სცადოთ თავიდან."
+   },
+   "migration_partly_fail": {
+      "description": "Some migration data is broken.",
+      "message": "ანგარიშის ზოგიერთი მონაცემის იმპორტირება წარმატებით ვერ მოხერხდა."
+   },
+   "minutes": {
+      "message": "წუთი"
+   },
+   "new_phrase": {
+      "description": "New Passphrase.",
+      "message": "ახალი პაროლი"
+   },
+   "no": {
+      "description": "No.",
+      "message": "არა"
+   },
+   "no_entires": {
+      "message": "საჩვენებელი ანგარიშები არ არის. დაამატეთ თქვენი პირველი ანგარიში."
+   },
+   "no_insight_available": {
+      "message": "მოქმედება ვერ მოიძებნა, ყველაფერი რიგზეა!"
+   },
+   "ok": {
+      "description": "OK.",
+      "message": "Ok"
+   },
+   "onedrive_business_perms": {
+      "message": "რატომ მოითხოვს ბიზნეს ანგარიშები მეტ ნებართვას?"
+   },
+   "otp_backup_inform": {
+      "description": "Info text on import page",
+      "message": "თქვენ შეგიძლიათ სარეზერვო ასლების იმპორტირება სხვა აპლიკაციიდან."
+   },
+   "otp_backup_learn": {
+      "description": "learn more link on import page. Placed after otp_backup_inform",
+      "message": "შეიტყვეთ მეტი"
+   },
+   "otp_unsupported_warn": {
+      "description": "Warning if using account that is not supported by standard backup format.",
+      "message": "თქვენ გაქვთ ერთი ან მეტი Steam ან Blizzard ანგარიში. დაუშიფრავი სარეზერვო ასლების შემთხვევაში არ მოხდება სტანდარტიზირებული სარეზერვო ასლის ფორმატის გამოყენება."
+   },
+   "passphrase_info": {
+      "description": "Passphrase Info",
+      "message": "შეიყვანეთ პაროლი ანგარიშის მონაცემების გასაშიფრად."
+   },
+   "password_policy_default_hint": {
+      "message": "თქვენი პაროლი არ აკმაყოფილებს თქვენი ორგანიზაციის უსაფრთხოების მოთხოვნებს. დაუკავშირდით თქვენს ადმინისტრატორს დამატებითი ინფორმაციისთვის."
+   },
+   "period": {
+      "message": "პერიოდი"
+   },
+   "permission_active_tab": {
+      "message": "წვდომა მიმდინარე ჩანართზე QR კოდის დასკანერებისთვის."
+   },
+   "permission_alarms": {
+      "message": "Allows auto-lock to work."
+   },
+   "permission_clipboard_write": {
+      "message": "ანიჭებს მხოლოდ ჩაწერის წვდომას გაცვლის ბუფერზე, რათა დააკოპიროთ კოდები, ანგარიშზე დაჭერის დროს."
+   },
+   "permission_context_menus": {
+      "message": "ამატებს აუთენთიფიკატორს კონტექსტურ მენიუში."
+   },
+   "permission_drive": {
+      "message": "საშუალებას გაძლევთ, შექმნათ სარეზერვო ასლი Google Drive-ში."
+   },
+   "permission_drive_cannot_revoke": {
+      "message": "თავდაპირველად, უნდა გამორთოთ Google Drive-ში სარეზერვო ასლის შექმნა."
+   },
+   "permission_dropbox": {
+      "message": "საშუალებას გაძლევთ, შექმნათ სარეზერვო ასლი Dropbox-ში."
+   },
+   "permission_dropbox_cannot_revoke": {
+      "message": "თავდაპირველად, უნდა გამორთოთ Dropbox-ში სარეზერვო ასლის შექმნა."
+   },
+   "permission_identity": {
+      "message": "საშუალებას გაძლევთ შეხვიდეთ მესამე მხარის შენახვის სერვისებში."
+   },
+   "permission_onedrive": {
+      "message": "საშუალებას გაძლევთ, შექმნათ სარეზერვო ასლი OneDrive-ში."
+   },
+   "permission_onedrive_cannot_revoke": {
+      "message": "თავდაპირველად, უნდა გამორთოთ OneDrive-ში სარეზერვო ასლის შექმნა."
+   },
+   "permission_required": {
+      "message": "ეს არის აუცილებელი ნებართვა და მისი გაუქმება შეუძლებელია."
+   },
+   "permission_revoke": {
+      "message": "ნებართვის გაუქმება"
+   },
+   "permission_scripting": {
+      "message": "Inject scripts into he current tab to scan QR codes and allow auto-fill to work."
+   },
+   "permission_show_required_permissions": {
+      "message": "გაუქმებადი ნებართვების ჩვენება"
+   },
+   "permission_storage": {
+      "message": "წვდომა ბრაუზერის შენახვის ადგილზე ანგარიშის ინფორმაციის შესანახად."
+   },
+   "permission_sync_clock": {
+      "message": "საშუალებას გაძლევთ, მოახდინოთ დროის სინქრონიზაცია Google-თან."
+   },
+   "permission_unknown_permission": {
+      "message": "უცნობი ნებართვა. თუ ამ შეტყობინებას ხედავთ, გთხოვთ, შეგვატყობინოთ პრობლემის შესახებ."
+   },
+   "permissions": {
+      "message": "ნებართვები"
+   },
+   "phrase": {
+      "description": "Passphrase.",
+      "message": "პაროლი"
+   },
+   "phrase_incorrect": {
+      "description": "Passphrase Incorrect.",
+      "message": "თქვენ ვერ შეძლებთ ახალი ანგარიშის დამატებას, სანამ ყველა ანგარიში არ იქნება გაშიფრული. გაგრძელებამდე, გთხოვთ, შეიყვანოთ სწორი პაროლი."
+   },
+   "phrase_incorrect_export": {
+      "description": "Skip Unable-decripted Data.",
+      "message": "ანგარიშები, რომელთა გაშიფრვაც ვერ მოხერხდა, არ იქნება ამ სარეზერვო ასლში ჩართული."
+   },
+   "phrase_not_match": {
+      "description": "Passphrase Not Match.",
+      "message": "პაროლი არ ემთხვევა."
+   },
+   "phrase_wrong": {
+      "message": "Password incorrect"
+   },
+   "popout": {
+      "description": "Make window turn into persistent popup",
+      "message": "ცალკე ფანჯარა"
+   },
+   "remember_phrase": {
+      "description": "Remember Passphrase",
+      "message": "პაროლის დამახსოვრება"
+   },
+   "remind_backup": {
+      "description": "Remind Backup",
+      "message": "გაქვთ თუ არა ანგარიშებისთვის სარეზერვო ასლი? არ დაელოდოთ, სანამ დაგვიანებული არაა!"
+   },
+   "remove": {
+      "description": "Remove password.",
+      "message": "წაშლა"
+   },
+   "resize_popup_page": {
+      "description": "Popup Page Settings",
+      "message": "პარამეტრები"
+   },
+   "scale": {
+      "description": "Scale",
+      "message": "მასშტაბი"
+   },
+   "search": {
+      "description": "Search",
+      "message": "ძიება"
+   },
+   "secret": {
+      "description": "Secret.",
+      "message": "გასაღები"
+   },
+   "security": {
+      "description": "Security.",
+      "message": "უსაფრთხოება"
+   },
+   "security_warning": {
+      "description": "Passphrase Warning.",
+      "message": "ეს პაროლი გამოყენებული იქნება თქვენი ანგარიშების დაშიფვრისთვის. ვერავინ დაგეხმარებათ, თუ დაგავიწყდათ პაროლი."
+   },
+   "settings": {
+      "description": "Settings.",
+      "message": "პარამეტრები"
+   },
+   "show_all_entries": {
+      "description": "Show all entries.",
+      "message": "ყველა ჩანაწერის ჩვენება"
+   },
+   "show_all_insights": {
+      "message": "ყველა მოქმედების ჩვენება."
+   },
+   "sign_in": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "შესვლა"
+   },
+   "sign_in_business": {
+      "description": "Sign in to 3rd party storage services",
+      "message": "შესვლა (ბიზნესი)"
+   },
+   "smart_filter": {
+      "message": "ჭკვიანი ფილტრი"
+   },
+   "source": {
+      "description": "Source Code.",
+      "message": "წყაროს კოდი"
+   },
+   "storage_sync_info": {
+      "description": "3rd party backup info",
+      "message": "ავტომატურად შექმენით თქვენი მონაცემების სარეზერვო ასლი მესამე მხარის შენახვის სერვისებში."
+   },
+   "sync_clock": {
+      "description": "Sync Clock",
+      "message": "საათის Google-თან სინქრონიზაცია"
+   },
+   "theme": {
+      "description": "Theme",
+      "message": "თემა"
+   },
+   "theme_compact": {
+      "description": "Compact theme",
+      "message": "კომპაქტური"
+   },
+   "theme_dark": {
+      "description": "Dark theme",
+      "message": "მუქი"
+   },
+   "theme_flat": {
+      "description": "Flat theme",
+      "message": "სწორი"
+   },
+   "theme_high_contrast": {
+      "description": "High Contrast theme",
+      "message": "მაღალი კონტრასტი"
+   },
+   "theme_light": {
+      "description": "Light theme",
+      "message": "ღია"
+   },
+   "theme_simple": {
+      "description": "Simple theme",
+      "message": "მარტივი"
+   },
+   "token_revoked": {
+      "description": "Error authenticating to backup service. $SERVICE$ will be replaced with a proper noun (E.g.: 'Google Drive' or 'Dropbox')",
+      "message": "თქვენს $SERVICE$ ანგარიშთან დაკავშირებისას წარმოიშვა პრობლემა, გთხოვთ, შეხვიდეთ ხელახლა.",
+      "placeholders": {
+         "service": {
+            "content": "$1",
+            "example": "Google Drive"
+         }
+      }
+   },
+   "translate": {
+      "description": "Translate.",
+      "message": "თარგმნა"
+   },
+   "type": {
+      "message": "ტიპი"
+   },
+   "update": {
+      "description": "Update.",
+      "message": "განახლება"
+   },
+   "updateFailure": {
+      "description": "Update Failure.",
+      "message": "წარუმატებლად."
+   },
+   "updateSuccess": {
+      "description": "Update Success.",
+      "message": "წარმატებით."
+   },
+   "use_autofill": {
+      "description": "Use Autofill",
+      "message": "ავტომატური შევსების გამოყენება"
+   },
+   "use_high_contrast": {
+      "description": "Use High Contrast",
+      "message": "მაღალი კონტრასტის გამოყენება"
+   },
+   "warning": {
+      "message": "გაფრთხილება"
+   },
+   "yes": {
+      "description": "Yes.",
+      "message": "დიახ"
+   }
+}
