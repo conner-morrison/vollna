@@ -145,6 +145,11 @@ def handle_once(extract_list, send_list):
     context = scrape.page_context(html)
     if context['accessDenied']:
         raise RuntimeError('session "%s" has no access to that page' % state['session'])
+    # A logged-out session is handed the sign-in page, which parses as a feed with no jobs at all.
+    # Saying so beats watching an empty page for days and reporting nothing wrong.
+    if scrape.needs_login(html):
+        raise RuntimeError('session "%s" is logged out of Vollna: open the session and log in '
+                           'again, then start watching' % state['session'])
 
     rows = scrape.parse_rows(html)
     seen = set(state['seen'])

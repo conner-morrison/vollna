@@ -222,11 +222,7 @@ def delete_session(name):
 
 
 def needs_login(html):
-    import re
-    if re.search(r'type\s*=\s*["\']password["\']', html, re.I):
-        return True
-    head = scrape.text_from_html(html)[:400].lower()
-    return any(sign in head for sign in ('sign in to', 'log in to', 'sign in with google'))
+    return scrape.needs_login(html)         # one definition, shared with the auto watcher
 
 
 def run_scrape(name, url, selector, wait, extract=None):
@@ -309,6 +305,21 @@ class Handler(BaseHTTPRequestHandler):
             listing = list_sessions()
             return self.send_json({'sessions': listing,
                                    'selected': selected_session([s['name'] for s in listing])})
+        if self.path.startswith('/favicon'):
+            icon = os.path.join(HERE, 'favicon.svg')
+            if not self.path.startswith('/favicon.svg') or not os.path.exists(icon):
+                self.send_response(404)             # .ico and friends: there is only the SVG
+                self.end_headers()
+                return
+            with open(icon, 'rb') as handle:
+                art = handle.read()
+            self.send_response(200)
+            self.send_header('Content-Type', 'image/svg+xml')
+            self.send_header('Cache-Control', 'max-age=86400')
+            self.send_header('Content-Length', str(len(art)))
+            self.end_headers()
+            return self.wfile.write(art)
+
         page = os.path.join(HERE, 'ui.html')
         with open(page, 'rb') as handle:
             body = handle.read()

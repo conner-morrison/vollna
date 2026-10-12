@@ -157,6 +157,16 @@ def page_context(html):
     return {'account': account, 'accessDenied': denied}
 
 
+def needs_login(html):
+    """True when the page is Vollna's sign-in screen rather than the content asked for."""
+    import re as regex
+
+    if regex.search(r'type\s*=\s*["\']password["\']', html, regex.I):
+        return True
+    head = text_from_html(html)[:400].lower()
+    return any(sign in head for sign in ('sign in to', 'log in to', 'sign in with google'))
+
+
 def parse_vollna(html):
     """Pull the job title, the real Upwork link and the description out of a Vollna result page."""
     import re as regex

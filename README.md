@@ -117,3 +117,8 @@ stable (a class name usually survives longer than `div:nth-child(7)`).
 - The tab is left open so you can see what was read.
 - Sites that forbid automated access in their terms are your call to respect; this only reads
   pages you are already allowed to see, in your own browser.
+
+## Credits
+
+The control panel's favicon is the *radar* icon from [Lucide](https://lucide.dev), used under the ISC licence.
+Copyright (c) 2026 Lucide Icons and Contributors.
