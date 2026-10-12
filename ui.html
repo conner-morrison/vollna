@@ -537,8 +537,10 @@
               h['feedback score to client'] ? `to client ${h['feedback score to client']}: ${h['written feedback to client'] || '(no text)'}` : null,
             ].filter(Boolean).map((line) => `      ${line}`).join('\n');
             return `  ${mark} ${h['job title'] || '(no title)'}\n`
-              + `      ${h['Project period'] || '?'} · ${h['project time commitment'] || '?'} · `
-              + `${h['hourly rate'] || '?'} · billed ${h['total billed'] || '?'}`
+              + `      ${h['Project period'] || '?'} · `
+              + (h['payment type'] === 'fixed'
+                ? `fixed price · billed ${h['total billed'] || '?'}`
+                : `${h['project time commitment'] || '?'} · ${h['hourly rate'] || '?'} · billed ${h['total billed'] || '?'}`)
               + (feedback ? '\n' + feedback : '');
           });
           parts.push(`Work history (${done} completed):\n` + rows.join('\n'));

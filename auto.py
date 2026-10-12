@@ -97,9 +97,13 @@ def job_text(row, decision, why, send_list):
                 done += 1
                 mark = '#%d' % done
             block.append('  %s %s' % (mark, entry.get('job title') or '(no title)'))
-            block.append('      %s | %s | %s | billed %s' % (
-                entry.get('Project period') or '?', entry.get('project time commitment') or '?',
-                entry.get('hourly rate') or '?', entry.get('total billed') or '?'))
+            if entry.get('payment type') == 'fixed':
+                block.append('      %s | fixed price | billed %s' % (
+                    entry.get('Project period') or '?', entry.get('total billed') or '?'))
+            else:
+                block.append('      %s | %s | %s | billed %s' % (
+                    entry.get('Project period') or '?', entry.get('project time commitment') or '?',
+                    entry.get('hourly rate') or '?', entry.get('total billed') or '?'))
             for score, text, who in (('feedback score to freelancer', 'written feedback to freelancer',
                                       'to freelancer'),
                                      ('feedback score to client', 'written feedback to client',

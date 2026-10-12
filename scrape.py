@@ -293,7 +293,7 @@ def parse_project(html):
 
 HISTORY_CATEGORIES = ('job title', 'feedback score to freelancer', 'written feedback to freelancer',
                       'feedback score to client', 'written feedback to client', 'Project period',
-                      'project time commitment', 'hourly rate', 'total billed')
+                      'project time commitment', 'hourly rate', 'total billed', 'payment type')
 
 WORK_HISTORY_URL = 'https://www.vollna.com/project/%s/work-history'
 
@@ -323,11 +323,17 @@ def parse_work_history(fragment):
             part = block.split(who, 1)
             if len(part) < 2:
                 continue
-            chunk = part[1][:1200]
+            # one side's feedback ends where the other side's starts, or at the date column, so a
+            # side with no text can never borrow the other side's
+            chunk = regex.split(r'To (?:freelancer|client):|<div class="text-sm text-gray-600 w-\[200px\]',
+                                part[1], 1)[0]
             score = regex.search(r'<span class="text-sm font-medium">([\d.]+)</span>', chunk)
             if score:
                 entry[score_key] = score.group(1)
-            written = regex.search(r'<div class="text-sm text-gray-700 break-words">([\s\S]*?)</div>', chunk)
+            # long feedback is shown cut off with a "More" button; the whole text sits in a hidden
+            # js-comment-full span next to it
+            written = (regex.search(r'<span class="js-comment-full[^"]*">([\s\S]*?)</span>', chunk)
+                       or regex.search(r'<div class="text-sm text-gray-700 break-words">([\s\S]*?)</div>', chunk))
             if written:
                 entry[text_key] = ' '.join(text_from_html(written.group(1)).split()) or None
 
@@ -339,13 +345,19 @@ def parse_work_history(fragment):
             if period:
                 entry['Project period'] = (period.group(1) + ' - ' + period.group(2)
                                            if period.group(2) else period.group(1))
+            # hourly contracts read "5 hrs @ $31.50/hr Billed: $157.50", fixed-price ones "FIXED $69.00"
             worked = regex.search(r'([\d,.]+)\s*hrs?\s*@\s*\$([\d,.]+)/hr', flat)
             if worked:
+                entry['payment type'] = 'hourly'
                 entry['project time commitment'] = worked.group(1) + 'hrs'
                 entry['hourly rate'] = '$' + worked.group(2) + '/hr'
             billed = regex.search(r'Billed:\s*\$([\d,.]+)', flat)
             if billed:
                 entry['total billed'] = '$' + billed.group(1)
+            fixed = regex.search(r'FIXED\s*\$([\d,.]+)', flat, regex.I)
+            if fixed:
+                entry['payment type'] = 'fixed'
+                entry['total billed'] = '$' + fixed.group(1)
         entries.append(entry)
     return entries
 
@@ -494,14 +506,23 @@ def parse_rows(html):
         start = marks[index - 1] if index else 0
         body = html[start:mark] + html[mark:marks[index + 1] if index + 1 < len(marks) else len(html)][:40000]
 
+        # body also holds the previous row's details, links included, so the link must carry this
+        # row's own pid; the first link in body would be the previous job's
+        project_id = str(context.get('projectId') or '')
         link = None
-        redirect = regex.search(r'href="(/go\?[^"]*url=[^"&]+)"', body)
+        redirect = None
+        for found in regex.finditer(r'href="(/go\?[^"]*url=[^"&]+)"', body):
+            if regex.search(r'[?&;]pid=%s(?:&|$)' % regex.escape(project_id), found.group(1)):
+                redirect = found
+                break
         if redirect:
             query = urllib.parse.urlparse(redirect.group(1).replace('&amp;', '&')).query
             encoded = urllib.parse.parse_qs(query).get('url', [''])[0]
             link = urllib.parse.unquote(urllib.parse.unquote(encoded)) or None
         if not link:
-            direct = regex.search(r'https://www\.upwork\.com/jobs/(~\d+)', body)
+            # without a pid to match, only look below this row's own marker
+            own = html[mark:marks[index + 1] if index + 1 < len(marks) else len(html)][:40000]
+            direct = regex.search(r'https://www\.upwork\.com/jobs/(~\d+)', own)
             link = 'https://www.upwork.com/jobs/' + direct.group(1) if direct else None
 
         budget = context.get('budgetRaw') or {}
