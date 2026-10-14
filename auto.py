@@ -184,14 +184,19 @@ def handle_once(extract_list, send_list):
 
 
 def loop(extract_list, send_list):
-    while not stop_event.is_set():
-        try:
-            handle_once(extract_list, send_list)
-            state['error'] = None
-        except Exception as problem:            # noqa: BLE001 - keep watching, show it in the UI
-            state['error'] = str(problem)[:200]
-        stop_event.wait(max(30, int(state['interval'])))
-    state['running'] = False
+    try:
+        while not stop_event.is_set():
+            try:
+                handle_once(extract_list, send_list)
+                state['error'] = None
+            # scrape.py reports Chrome trouble (an empty render after the Mac slept, a locked
+            # profile) with sys.exit, a SystemExit that "except Exception" lets through; it used to
+            # end this thread silently while the panel still said "watching"
+            except (Exception, SystemExit) as problem:      # noqa: BLE001 - keep watching, show it
+                state['error'] = '%s (%s)' % (str(problem)[:200], time.strftime('%Y-%m-%d %H:%M'))
+            stop_event.wait(max(30, int(state['interval'])))
+    finally:
+        state['running'] = False
 
 
 def start(url, session, profile, interval, extract_list, send_list):
@@ -217,7 +222,9 @@ def stop():
 
 
 def status():
-    return {'running': state['running'], 'url': state['url'], 'session': state['session'],
+    # trust the thread, not the flag: a watcher that died is not watching
+    alive = state['running'] and worker is not None and worker.is_alive()
+    return {'running': alive, 'url': state['url'], 'session': state['session'],
             'interval': state['interval'], 'checked': state['checked'], 'error': state['error'],
             'extract': state.get('extract', []), 'send': state.get('send', []),
             'watching': len(state['seen']), 'handled': state['handled'][:50]}

@@ -746,6 +746,28 @@
       try { renderAuto(await api('/api/auto')); } catch (e) { show(e.message, false); }
     }
 
+    // After a reload the page knows nothing; the server does. A running watcher puts the page back
+    // in Auto with its own URL and interval, otherwise the last URL typed here comes back.
+    async function restoreAuto() {
+      let data = null;
+      try { data = await api('/api/auto'); } catch (e) { /* server down: keep the saved mode */ }
+      if (data && data.running) {
+        $('url').value = data.url;
+        const interval = String(data.interval);
+        if (![...$('autoInterval').options].some((option) => option.value === interval)) {
+          $('autoInterval').add(new Option(`${data.interval} seconds`, interval));
+        }
+        $('autoInterval').value = interval;
+        setMode('auto');
+        return;
+      }
+      try { $('url').value = $('url').value || localStorage.getItem('scraper.url') || ''; } catch (e) { /* private mode */ }
+      if (data && data.url && !$('url').value) $('url').value = data.url;
+    }
+    $('url').addEventListener('input', () => {
+      try { localStorage.setItem('scraper.url', $('url').value.trim()); } catch (e) { /* private mode */ }
+    });
+
     document.querySelectorAll('input[name="mode"]').forEach((radio) => {
       radio.onchange = () => setMode(radio.value);
     });
@@ -794,6 +816,7 @@
     let savedMode = 'manual';
     try { savedMode = localStorage.getItem('scraper.mode') || 'manual'; } catch (e) { /* private mode */ }
     setMode(savedMode);
+    restoreAuto();
     setInterval(() => { if (panelOpen) refresh(); }, 5000);
   </script>
 </body>
