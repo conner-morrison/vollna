@@ -27,8 +27,8 @@ VOLLNA_DASHBOARD = 'https://www.vollna.com/dashboard'
 PORT = int(os.environ.get('SCRAPER_PORT', '8787'))
 
 # What can be pulled off a page, what is pulled by default, and what is sent on by default.
-ITEMS = ['Job title', 'Job link', 'Job description', 'Project info', 'Client info',
-         'Work history', 'Client name']
+ITEMS = ['Job title', 'Job link', 'Job description', 'Screening Questions', 'Project info',
+         'Client info', 'Work history', 'Client name']
 DEFAULT_EXTRACT = ['Job title', 'Job link', 'Job description', 'Project info', 'Client info']
 DEFAULT_SEND = ['Job title', 'Job link', 'Job description']
 

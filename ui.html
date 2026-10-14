@@ -512,6 +512,11 @@
         || PROJECT_KEYS.some((k) => project[k]) || (data.history || []).length || data.clientName;
       if (!asked.size || !anything) return data.text || '(nothing extracted)';
       const parts = chosen.map((name) => `${name}:\n${fields[name] || '(not found)'}`);
+      if (asked.has('Screening Questions')) {
+        const questions = fields['Screening Questions'] || [];
+        parts.push('Screening Questions:\n' + (questions.length
+          ? questions.map((q, n) => `  ${n + 1}. ${q}`).join('\n') : '  (none)'));
+      }
       if (asked.has('Client name') && data.clientName) {
         const found = data.clientName;
         parts.push('Client name:\n  ' + (found.name

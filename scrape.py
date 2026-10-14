@@ -138,7 +138,26 @@ def text_from_html(html, text_selector=None):
     return '\n'.join(line.strip() for line in body.splitlines()).strip()
 
 
-VOLLNA_CATEGORIES = ('Job title', 'Job link', 'Job description')
+VOLLNA_CATEGORIES = ('Job title', 'Job link', 'Job description', 'Screening Questions')
+
+
+def screening_questions(context, html):
+    """The client's screening questions, in order, as plain text. An empty list when there are none.
+
+    The row's JSON carries them as clientQuestions; the page also lists them under "Client's
+    questions:", which is read when the JSON has none.
+    """
+    import re as regex
+
+    asked = [plain_text(q) for q in ((context or {}).get('clientQuestions') or [])]
+    asked = [q for q in asked if q]
+    if asked:
+        return asked
+    block = regex.search(r"Client(?:'|&#0?39;|&apos;|’)s questions:\s*</div>\s*<ul[^>]*>([\s\S]*?)</ul>", html or '')
+    if not block:
+        return []
+    items = regex.findall(r'<li[^>]*>([\s\S]*?)</li>', block.group(1))
+    return [q for q in (plain_text(item) for item in items) if q]
 
 
 def page_context(html):
@@ -192,6 +211,18 @@ def parse_vollna(html):
     description_html = find_element(html, 'div.break-words')
     if description_html:
         found['Job description'] = text_from_html(description_html) or None
+
+    # the first job on the page, like everything else here
+    import html as html_module
+    import json as json_module
+    context = None
+    marker = regex.search(r'data-project-context="([^"]*)"', html)
+    if marker:
+        try:
+            context = json_module.loads(html_module.unescape(marker.group(1)))
+        except ValueError:
+            context = None
+    found['Screening Questions'] = screening_questions(context, html)
     return found
 
 
@@ -531,6 +562,9 @@ def parse_rows(html):
             'Job title': plain_text(context.get('title')),
             'Job link': link,
             'Job description': plain_text(context.get('description')),
+            # the row's JSON is the only safe source on a feed: the visible "Client's questions" list
+            # sits above the NEXT row's marker, so a page search would hand one job another's questions
+            'Screening Questions': screening_questions(context, None),
             'skills': [plain_text(skill) for skill in (context.get('skills') or [])],
             'budget': budget,
             'client': parse_client(body),

@@ -79,6 +79,10 @@ def job_text(row, decision, why, send_list):
             if found.get('name') else '(no name written in any feedback)'))
     if 'Job description' in send_list:
         block += ['', 'Job description:'] + scrape.text_lines(row.get('Job description') or '')
+    if 'Screening Questions' in send_list:
+        asked = row.get('Screening Questions') or []
+        block += ['', 'Screening Questions:'] + (['  %d. %s' % (n, q) for n, q in enumerate(asked, 1)]
+                                                 or ['  (none)'])
     for item, key, fields in (('Project info', 'project', scrape.PROJECT_CATEGORIES),
                               ('Client info', 'client', scrape.CLIENT_CATEGORIES)):
         if item in send_list:
