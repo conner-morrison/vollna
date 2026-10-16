@@ -6,14 +6,18 @@ ignored here. Threads live in reports.json so they survive restarts.
 """
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
+
+import events
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPORTS_FILE = os.path.join(HERE, 'reports.json')
 ENV_FILES = (os.path.join(HERE, '.env'), os.path.join(os.path.dirname(HERE), '.env'))
 JOB_TYPES = {'job', 'alert', 'invite', 'message', 'email', 'test'}
+poll_lock = threading.Lock()
 
 
 def env():
@@ -47,6 +51,7 @@ def load():
 def save(data):
     with open(REPORTS_FILE, 'w') as handle:
         json.dump(data, handle, indent=2, ensure_ascii=False)
+    events.changed()                      # threads, registration or channels may have moved
 
 
 def relay(path, method='GET', payload=None, timeout=25):
@@ -231,6 +236,12 @@ def text_of(body):
     return json.dumps(body, ensure_ascii=False)
 
 
+def pending_ticket():
+    """Whether a registration is waiting for approval with a ticket to ask about."""
+    return any(t.get('kind') == 'register' and t.get('status') != 'registered' and t.get('ticket')
+               for t in load()['threads'])
+
+
 def check_tickets():
     """Ask the server what came of any registration still waiting.
 
@@ -266,17 +277,125 @@ def check_tickets():
     return changed
 
 
-def poll():
-    """Fetch anything new from the relay and file it into threads. Returns how many arrived."""
-    check_tickets()                       # approval may be waiting under the ticket
-    data = load()
-    if not data.get('serverId'):
+JOIN_WORDS = ('join', 'added', 'add', 'member', 'allocat', 'assign', 'grant', 'subscrib', 'invite')
+LEAVE_WORDS = ('left', 'leave', 'remov', 'revok', 'unsubscrib', 'kick', 'delet')
+
+
+def notice_change(notice):
+    """('join' | 'leave' | None, [channel names]) read out of one server notice.
+
+    The relay does not document its notice shape, so this accepts the plain forms: a dict naming
+    "channel" or "channels" with a type/event/action word, or a sentence mentioning "#channel".
+    """
+    import re as regex
+
+    if isinstance(notice, dict):
+        names = notice.get('channels') or notice.get('channel') or []
+        names = [names] if isinstance(names, str) else list(names)
+        names = [n.get('name') if isinstance(n, dict) else n for n in names]
+        words = ' '.join(str(notice.get(k) or '') for k in ('type', 'kind', 'event', 'action',
+                                                             'text', 'message'))
+        if not names:
+            names = regex.findall(r'#([\w.-]+)', words)
+    else:
+        words = str(notice)
+        names = regex.findall(r'#([\w.-]+)', words)
+    names = [str(n).lstrip('#') for n in names if n]
+    lowered = words.lower()
+    if any(w in lowered for w in LEAVE_WORDS):
+        return 'leave', names
+    if any(w in lowered for w in JOIN_WORDS) or names:
+        return 'join', names
+    return None, names
+
+
+def notice_key(notice):
+    if isinstance(notice, dict):
+        for key in ('id', 'seq', 'notice_id'):
+            if notice.get(key) is not None:
+                return '%s:%s' % (key, notice[key])
+    return json.dumps(notice, sort_keys=True, ensure_ascii=False)
+
+
+def file_notices(data, notices):
+    """Record server notices, update the allocated channels from them, and show them in a thread."""
+    seen = set(data.setdefault('noticeKeys', []))
+    channels = set(data.get('channels') or [])
+    fresh = 0
+    for notice in notices:
+        key = notice_key(notice)
+        if key in seen:
+            continue                      # a notice the relay repeats is still one notice
+        seen.add(key)
+        data['noticeKeys'].append(key)
+        action, names = notice_change(notice)
+        if action == 'join':
+            channels.update(names)
+        elif action == 'leave':
+            channels.difference_update(names)
+        thread = next((t for t in data['threads'] if t['id'] == 'notices'), None)
+        if thread is None:
+            thread = {'id': 'notices', 'title': 'Server notices', 'kind': 'notices', 'completed': False,
+                      'created': time.strftime('%Y-%m-%d %H:%M'), 'messages': []}
+            data['threads'].insert(0, thread)
+        thread['messages'].append({'from': 'server', 'text': text_of(notice),
+                                   'at': time.strftime('%Y-%m-%d %H:%M')})
+        fresh += 1
+    data['noticeKeys'] = data['noticeKeys'][-200:]
+    data['channels'] = sorted(channels)
+    return fresh
+
+
+def channels():
+    """Channels the server has put this project in. Without one, nothing can be sent."""
+    return list(load().get('channels') or [])
+
+
+def job_channel():
+    """Where to post: the configured channel if the server allocated it, else the first allocated."""
+    allocated = channels()
+    if not allocated:
+        return None
+    wanted = env().get('RELAY_CHANNEL') or load().get('channel')
+    return wanted if wanted in allocated else allocated[0]
+
+
+def require_channel():
+    channel = job_channel()
+    if not channel:
+        raise RuntimeError('No channel allocated. The server has to add "%s" to a channel before '
+                           'anything can be sent; this updates by itself when it does.' % project_name())
+    return channel
+
+
+def poll(wait=0):
+    """Fetch anything new from the relay and file it into threads. Returns how many arrived.
+
+    With wait > 0 the relay holds the request open until it has something to say (or the wait runs
+    out), so a caller looping on this hears about notices and messages as soon as they are sent.
+    """
+    with poll_lock:                       # one poll at a time: two would race to ack and save
+        return _poll(wait)
+
+
+def _poll(wait):
+    if not load().get('serverId'):
         return 0                          # nothing to authenticate with yet; registration comes first
-    incoming = relay('/messages?wait=0&limit=50').get('messages') or []
-    added = 0
+    answer = relay('/messages?wait=%d&limit=50' % wait, timeout=wait + 20)
+    # loaded after the wait, not before: anything saved while the request was open must survive
+    data = load()
+    incoming = answer.get('messages') or []
+    added = file_notices(data, answer.get('notices') or [])
+    if isinstance(answer.get('channels'), list):
+        # the relay listing our channels outright is the final word
+        data['channels'] = sorted(str(c.get('name') if isinstance(c, dict) else c)
+                                  for c in answer['channels'])
+    data['lastPoll'] = time.strftime('%Y-%m-%d %H:%M:%S')
     for message in incoming:
         body = message.get('body')
         channel, seq = message.get('channel'), message.get('seq')
+        if channel and channel not in data['channels']:
+            data['channels'] = sorted(data['channels'] + [channel])   # only members receive
         given = (body.get('id') or body.get('workerId') or body.get('assignedId')) if isinstance(body, dict) else None
         kind = body.get('type') if isinstance(body, dict) else None
         if given and (kind in ('register-approved', 'registered', 'approval') or 'register' in str(kind or '')):
@@ -342,10 +461,7 @@ def send(thread_id, text):
     if found['completed']:
         raise RuntimeError('This conversation is completed; reopen it to write.')
     require_registration()
-    channel = found.get('channel') or load().get('channel') or env().get('RELAY_CHANNEL')
-    if not channel:
-        raise RuntimeError('No channel yet. The server has to put "%s" in a channel, or send an '
-                           'instruction first so replies can go back to it.' % project_name())
+    channel = found.get('channel') if found.get('channel') in channels() else require_channel()
     relay('/publish', 'POST', {
         'channel': channel,
         'id': 'report-%s-%d' % (thread_id, int(time.time() * 1000)),
@@ -363,10 +479,11 @@ def set_completed(thread_id, done=True):
     if found is None:
         raise RuntimeError('No such conversation.')
     found['completed'] = bool(done)
-    if done and registered():
+    channel = found.get('channel') if found.get('channel') in channels() else job_channel()
+    if done and registered() and channel:
         try:
             relay('/publish', 'POST', {
-                'channel': found.get('channel') or load().get('channel') or env().get('RELAY_CHANNEL') or 'jobs',
+                'channel': channel,
                 'id': 'report-done-%s-%d' % (thread_id, int(time.time() * 1000)),
                 'body': {'type': 'report-complete', 'threadId': thread_id},
             })
@@ -381,11 +498,11 @@ def set_completed(thread_id, done=True):
 def start(title, text):
     """Begin a new request to the server from this side."""
     require_registration()
+    channel = require_channel()
     data = load()
     thread_id = 'local-%d' % int(time.time() * 1000)
-    settings = env()
     data['threads'].insert(0, {'id': thread_id, 'title': title or text.strip().splitlines()[0][:70],
-                               'channel': settings.get('RELAY_CHANNEL') or 'jobs', 'completed': False,
+                               'channel': channel, 'completed': False,
                                'created': time.strftime('%Y-%m-%d %H:%M'), 'messages': []})
     save(data)
     return send(thread_id, text)

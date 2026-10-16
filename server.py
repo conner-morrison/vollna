@@ -12,9 +12,10 @@ import shutil
 import subprocess
 import threading
 import time
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import auto
+import events
 import reports
 import scrape
 
@@ -126,6 +127,14 @@ def keep_session_cookies(profile):
         json.dump(data, handle)
 
 
+def tell_when_closed(proc):
+    """Let open pages know when this Chrome window is closed, so its session shows as ready."""
+    def watch():
+        proc.wait()
+        events.changed()
+    threading.Thread(target=watch, daemon=True).start()
+
+
 def open_login_window(name, url):
     profile = profile_path(name)
     os.makedirs(profile, exist_ok=True)
@@ -135,6 +144,7 @@ def open_login_window(name, url):
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with lock:
         sessions[name] = {'state': 'waiting', 'proc': proc, 'url': url or ''}
+    tell_when_closed(proc)
 
 
 def open_window(name, url):
@@ -147,6 +157,7 @@ def open_window(name, url):
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with lock:
         sessions[name] = dict(sessions.get(name, {}), proc=proc, state='ready')
+    tell_when_closed(proc)
 
 
 def finish_login(name, close_window=False):
@@ -275,6 +286,24 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def stream_events(self):
+        """Server-sent events: one line each time something changes, a comment now and then so a
+        dropped connection is noticed. The page redraws on each event; EventSource reconnects by
+        itself after a restart."""
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/event-stream')
+        self.send_header('Cache-Control', 'no-cache')
+        self.end_headers()
+        seen = events.version()
+        try:
+            while True:
+                now = events.wait(seen, 25)
+                self.wfile.write(b'data: changed\n\n' if now != seen else b': still here\n\n')
+                self.wfile.flush()
+                seen = now
+        except (BrokenPipeError, ConnectionResetError):
+            return                          # the page was closed or reloaded
+
     def do_GET(self):
         if self.path.startswith('/api/reports/thread'):
             from urllib.parse import parse_qs, urlparse
@@ -285,18 +314,20 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json({'thread': found})
 
         if self.path.startswith('/api/reports'):
-            note = None
-            try:
-                reports.poll()                     # pick up anything the server sent
-            except RuntimeError as problem:
-                note = str(problem)                # show threads anyway when the relay is down
-            return self.send_json({'threads': reports.threads(), 'note': note,
+            # what the listener has filed; the relay itself is not asked from here
+            return self.send_json({'threads': reports.threads(), 'note': relay_trouble['note'],
                                    'projectName': reports.project_name(),
                                    'registered': reports.registered(),
-                                   'serverId': reports.load().get('serverId')})
+                                   'serverId': reports.load().get('serverId'),
+                                   'channels': reports.channels(),
+                                   'jobChannel': reports.job_channel(),
+                                   'lastPoll': reports.load().get('lastPoll')})
 
         if self.path.startswith('/api/auto'):
             return self.send_json(auto.status())
+
+        if self.path.startswith('/api/events'):
+            return self.stream_events()
 
         if self.path.startswith('/api/prefs'):
             return self.send_json(preferences())
@@ -367,10 +398,14 @@ class Handler(BaseHTTPRequestHandler):
                 url = (data.get('url') or '').strip()
                 if not url.startswith('http'):
                     return self.send_json({'error': 'Give the server URL, starting with http.'}, 400)
-                return self.send_json({'thread': reports.register(url)})
+                thread = reports.register(url)
+                registration_sent.set()         # start listening for the approval
+                return self.send_json({'thread': thread})
 
             if self.path == '/api/reports/again':
-                return self.send_json({'thread': reports.request_again((data.get('id') or '').strip())})
+                thread = reports.request_again((data.get('id') or '').strip())
+                registration_sent.set()
+                return self.send_json({'thread': thread})
 
             if self.path == '/api/reports/new':
                 text = (data.get('text') or '').strip()
@@ -400,10 +435,17 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({'error': 'Give the page URL to watch.'}, 400)
                 if not os.path.isdir(profile_path(name)):
                     return self.send_json({'error': 'Session "%s" does not exist.' % name}, 400)
+                if not reports.registered():
+                    return self.send_json({'error': 'Not registered with a server yet: use Report -> '
+                                                    'New -> Register me first.'}, 400)
+                if not reports.job_channel():
+                    return self.send_json({'error': 'The server has not allocated a channel to this '
+                                                    'project yet, so jobs would have nowhere to go.'}, 400)
                 prefs = preferences()
                 return self.send_json(auto.start(url, name, profile_path(name),
                                                  int(data.get('interval') or 120),
-                                                 prefs['extract'], prefs['send']))
+                                                 prefs['extract'], prefs['send'],
+                                                 catch_up=bool(data.get('catchUp'))))
 
             if self.path == '/api/auto/stop':
                 return self.send_json(auto.stop())
@@ -446,7 +488,42 @@ class Handler(BaseHTTPRequestHandler):
         self.send_json({'error': 'unknown endpoint'}, 404)
 
 
+relay_trouble = {'note': None}
+registration_sent = threading.Event()
+
+
+def note_trouble(note):
+    if relay_trouble['note'] != note:
+        relay_trouble['note'] = note
+        events.changed()
+
+
+def listen_to_relay(hold=50):
+    """Hear from the server as soon as it has something: approvals, notices, channel changes.
+
+    Once registered, a long poll stays open and the relay answers the moment it sends anything, so
+    nothing is asked on a timer. Before that there is no id to listen with: the only way to hear of
+    an approval is the registration ticket, asked about now and then while one is pending.
+    """
+    while True:
+        try:
+            if reports.registered():
+                reports.poll(wait=hold)
+            elif reports.pending_ticket():
+                reports.check_tickets()
+                registration_sent.wait(30)
+            else:
+                registration_sent.wait()    # nothing to listen for until a registration is sent
+            registration_sent.clear()
+            note_trouble(None)
+        except Exception as problem:        # noqa: BLE001 - relay down: say so, retry shortly
+            note_trouble(str(problem)[:200])
+            time.sleep(10)
+
+
 if __name__ == '__main__':
     os.makedirs(PROFILES_DIR, exist_ok=True)
+    threading.Thread(target=listen_to_relay, daemon=True).start()
     print('Scraper UI: http://127.0.0.1:%d  (Ctrl+C to stop)' % PORT)
-    HTTPServer(('127.0.0.1', PORT), Handler).serve_forever()
+    # threaded: an open /api/events stream or a long scrape must not hold up every other request
+    ThreadingHTTPServer(('127.0.0.1', PORT), Handler).serve_forever()

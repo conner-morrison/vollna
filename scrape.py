@@ -22,9 +22,34 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CHROME_JS = os.path.join(HERE, 'chrome.js')
 OUT_DIR = os.path.join(HERE, 'out')
 PAGES_DIR = os.path.join(HERE, 'pages')
-CHROME_BIN = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 PROFILE_DIR = os.path.join(HERE, 'chrome-profile')
+IS_MAC = sys.platform == 'darwin'
+MAC_CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+LINUX_CHROMES = ('google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser')
+
+
+def find_chrome():
+    """Chrome's executable: $CHROME_BIN if set, else the usual place on macOS or Linux."""
+    import shutil
+
+    if os.environ.get('CHROME_BIN'):
+        return os.environ['CHROME_BIN']
+    if IS_MAC:
+        return MAC_CHROME
+    for name in LINUX_CHROMES:
+        found = shutil.which(name)
+        if found:
+            return found
+    return LINUX_CHROMES[0]        # not found: launching it gives a clear "No such file" error
+
+
+CHROME_BIN = find_chrome()
 COMMON_FLAGS = ['--no-first-run', '--no-default-browser-check']
+if not IS_MAC:
+    # Linux Chrome encrypts cookies with a key from the desktop keyring, which a headless run may
+    # not reach. The basic store uses a fixed key, so the login window and the headless snapshot
+    # always agree, and no keyring prompt appears.
+    COMMON_FLAGS.append('--password-store=basic')
 
 STATUS_JS = """(function () {
   var login = %s;
@@ -824,6 +849,9 @@ def main():
         url = args.url or recipe.get('url')
         if not url:
             sys.exit('Give a --url, a --file, or a recipe containing a url.')
+        if not IS_MAC:
+            sys.exit('Driving your open Chrome uses AppleScript, which only exists on macOS.\n'
+                     'Use --headless (after --login once) or --file instead.')
         open_in_chrome(url)
         time.sleep(2)
         wait_for_page(url, recipe, args.wait)

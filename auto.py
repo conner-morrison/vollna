@@ -9,6 +9,8 @@ import os
 import threading
 import time
 
+import events
+import notify
 import reports
 import rules
 import scrape
@@ -16,10 +18,15 @@ import scrape
 HERE = os.path.dirname(os.path.abspath(__file__))
 HANDLED_FILE = os.path.join(HERE, 'handled.json')
 MAX_HANDLED = 200
+CATCH_UP_DEPTH = 25        # how far down the page to look for the last job before giving up
 
 state = {
     'running': False, 'url': '', 'session': '', 'interval': 120,
     'checked': None, 'error': None, 'seen': [], 'handled': [],
+    # per page URL: the newest job on it when it was last checked, so a restart knows where it was
+    'last': {},
+    # set by start(): None once the first check is done, else whether to send what was missed
+    'catchUp': None, 'note': None,
 }
 lock = threading.Lock()
 stop_event = threading.Event()
@@ -32,14 +39,16 @@ def load_handled():
             saved = json.load(handle)
         state['handled'] = saved.get('handled', [])
         state['seen'] = saved.get('seen', [])
+        state['last'] = saved.get('last', {})
     except (OSError, ValueError):
         pass
 
 
 def save_handled():
     with open(HANDLED_FILE, 'w') as handle:
-        json.dump({'handled': state['handled'][:MAX_HANDLED], 'seen': state['seen'][-500:]},
-                  handle, indent=2, ensure_ascii=False)
+        json.dump({'handled': state['handled'][:MAX_HANDLED], 'seen': state['seen'][-500:],
+                   'last': state['last']}, handle, indent=2, ensure_ascii=False)
+    events.changed()
 
 
 def extras(row, wanted):
@@ -133,8 +142,9 @@ def send_job(row, decision, why, send_list):
     payload = job_text(row, decision, why, send_list)
     if not reports.registered():
         return 'not sent: this project is not registered yet'
-    data = reports.load()
-    channel = data.get('channel') or reports.env().get('RELAY_CHANNEL') or 'jobs'
+    channel = reports.job_channel()
+    if not channel:
+        return 'not sent: the server has not allocated a channel to this project'
     message_id = 'job-%s' % row['projectId']
     try:
         answer = reports.relay('/publish', 'POST', {'channel': channel, 'id': message_id,
@@ -159,15 +169,18 @@ def handle_once(extract_list, send_list):
         raise RuntimeError('session "%s" is logged out of Vollna: open the session and log in '
                            'again, then start watching' % state['session'])
 
-    rows = scrape.parse_rows(html)
+    rows = [r for r in scrape.parse_rows(html) if r['projectId']]
     seen = set(state['seen'])
-    first_pass = not seen
-    fresh = [r for r in rows if r['projectId'] and r['projectId'] not in seen]
+    first_pass = state['catchUp'] is not None
+    if first_pass:
+        fresh = missed_jobs(rows, seen, state['catchUp'])
+        seen.update(r['projectId'] for r in rows)      # the rest of the page counts as seen
+        state['catchUp'] = None
+    else:
+        fresh = [r for r in rows if r['projectId'] not in seen]
 
     for row in fresh:
         seen.add(row['projectId'])
-        if first_pass:
-            continue            # the jobs already on the page when watching started are not new
         history, name, mentions = extras(row, extract_list)
         row['history'] = history
         row['clientName'] = {'name': name, 'mentions': mentions} if name or 'Client name' in extract_list else None
@@ -183,8 +196,49 @@ def handle_once(extract_list, send_list):
         })
     state['seen'] = list(seen)
     state['checked'] = time.strftime('%Y-%m-%d %H:%M')
+    if rows:
+        # the newest job looked at on this page: where the next start picks up from
+        state['last'][state['url']] = {'projectId': rows[0]['projectId'], 'title': rows[0]['Job title'],
+                                       'at': state['checked']}
     save_handled()
+    failed = [h for h in state['handled'][:len(fresh)] if h['status'].startswith('failed')]
+    if failed:
+        # a job the server never got is lost unless someone hears about it
+        raise RuntimeError('%d job(s) could not be sent to the server: %s'
+                           % (len(failed), failed[0]['status']))
     return len(fresh), first_pass
+
+
+def missed_jobs(rows, seen, catch_up):
+    """The jobs to handle on the first check after starting, and a note saying why.
+
+    No catch-up: none, everything on the page is taken as seen. Catch-up: look for the last job
+    checked last time within the top CATCH_UP_DEPTH; the jobs above it appeared while watching was
+    off. Not found that far down: too much was missed to tell, so the top CATCH_UP_DEPTH stand in.
+    """
+    if not catch_up:
+        state['note'] = 'Started without sending missed jobs: only jobs posted from now on are handled.'
+        return []
+    top = rows[:CATCH_UP_DEPTH]
+    ids = [r['projectId'] for r in top]
+    remembered = state['last'].get(state['url']) or {}
+    last = remembered.get('projectId')
+    if not last:
+        # nothing remembered for this page (watched before this was kept): the newest job on it
+        # that was already seen marks the same place
+        last = next((i for i in ids if i in seen), None)
+        remembered = next(({'title': r['Job title']} for r in top if r['projectId'] == last), {})
+    if last and last in ids:
+        missed = top[:ids.index(last)]
+        state['note'] = ('Caught up: %d job(s) were posted above the last one checked (%s).'
+                         % (len(missed), (remembered.get('title') or '')[:60]))
+    else:
+        missed = top
+        state['note'] = ('The last job checked was not in the top %d%s, so the top %d were analysed.'
+                         % (CATCH_UP_DEPTH, '' if last else ' (none remembered for this page)',
+                            len(missed)))
+    # one already handled (from this page or another filter that lists it too) is not sent twice
+    return [r for r in missed if r['projectId'] not in seen]
 
 
 def loop(extract_list, send_list):
@@ -196,32 +250,46 @@ def loop(extract_list, send_list):
             # scrape.py reports Chrome trouble (an empty render after the Mac slept, a locked
             # profile) with sys.exit, a SystemExit that "except Exception" lets through; it used to
             # end this thread silently while the panel still said "watching"
-            except (Exception, SystemExit) as problem:      # noqa: BLE001 - keep watching, show it
-                state['error'] = '%s (%s)' % (str(problem)[:200], time.strftime('%Y-%m-%d %H:%M'))
+            except (Exception, SystemExit) as problem:      # noqa: BLE001 - stop, and tell someone
+                # Watching on after an error only repeats it (a wrong URL, a logged-out session),
+                # so stop and alert a person, who can fix it and start again.
+                when = time.strftime('%Y-%m-%d %H:%M')
+                stop_event.set()
+                alert = notify.telegram('Stopped watching because of an error.\n\n'
+                                        'Error: %s\nPage: %s\nSession: %s\nAt: %s'
+                                        % (str(problem)[:500], state['url'], state['session'], when),
+                                        error=True)
+                state['error'] = '%s (%s) · Telegram alert %s' % (str(problem)[:200], when, alert)
+                events.changed()
+                break
             stop_event.wait(max(30, int(state['interval'])))
     finally:
         state['running'] = False
+        events.changed()                # a watcher that stopped must not still look like it runs
 
 
-def start(url, session, profile, interval, extract_list, send_list):
+def start(url, session, profile, interval, extract_list, send_list, catch_up=False):
     global worker
     with lock:
         if state['running']:
             raise RuntimeError('Already watching. Stop it first.')
         load_handled()          # pick up whatever is on disk, rather than stale memory
         state.update({'running': True, 'url': url, 'session': session, 'profile': profile,
-                      'interval': int(interval), 'error': None})
+                      'interval': int(interval), 'error': None, 'catchUp': bool(catch_up),
+                      'note': None})
         stop_event.clear()
         state['extract'] = list(extract_list)
         state['send'] = list(send_list)
         worker = threading.Thread(target=loop, args=(extract_list, send_list), daemon=True)
         worker.start()
+    events.changed()
     return status()
 
 
 def stop():
     stop_event.set()
     state['running'] = False
+    events.changed()
     return status()
 
 
@@ -231,12 +299,13 @@ def status():
     return {'running': alive, 'url': state['url'], 'session': state['session'],
             'interval': state['interval'], 'checked': state['checked'], 'error': state['error'],
             'extract': state.get('extract', []), 'send': state.get('send', []),
-            'watching': len(state['seen']), 'handled': state['handled'][:50]}
+            'watching': len(state['seen']), 'handled': state['handled'][:50],
+            'note': state['note'], 'last': state['last']}
 
 
 def forget():
     """Clear the handled list and what has been seen, so everything counts as new again."""
-    state['handled'], state['seen'] = [], []
+    state['handled'], state['seen'], state['last'] = [], [], {}
     save_handled()
     return status()
 

@@ -41,6 +41,13 @@ The login is remembered in `chrome-profile/`, so `--login` is usually a one-off 
 profile can only be used by one Chrome at a time: close the login window before scraping. macOS
 may ask once for Keychain access — allow it, or the saved login can't be read back.
 
+## Linux
+
+Headless mode and the control panel work on Linux too. Chrome is found as `google-chrome`,
+`google-chrome-stable`, `chromium` or `chromium-browser` on the PATH; set `CHROME_BIN` to use another.
+Profiles there store cookies with Chrome's basic password store, so no keyring is needed. The
+AppleScript mode (no `--headless`/`--file`) is macOS only.
+
 ## Without Chrome automation: saved pages
 
 If Chrome won't allow Apple Events, or a site is awkward to automate, save the page instead:

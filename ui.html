@@ -73,6 +73,9 @@
     .dialog label.check { display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; }
     .dialog label.check input { width: auto; }
     .tag.wait { background: var(--warnbg); color: var(--warn); }
+    .status-bar { margin: 0 0 12px; padding: 8px 12px; border-radius: 8px; font-size: 13px;
+                  border: 1px solid var(--line); background: var(--card); }
+    .status-bar.warn { background: var(--warnbg); color: var(--warn); border-color: transparent; }
     .report { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
     @media (max-width: 640px) { .report { grid-template-columns: 1fr; } }
     .report-list { border-right: 1px solid var(--line); padding-right: 12px; }
@@ -109,6 +112,7 @@
       </div>
     </header>
     <div id="msg" class="hidden"></div>
+    <p id="regBanner" class="status-bar hidden"></p>
 
     <div id="tab-workplace">
     <div class="workplace">
@@ -174,11 +178,6 @@
         <input id="url" placeholder="https://www.vollna.com/dashboard/monitoring/result41173302" spellcheck="false">
       </label>
       <div class="row" style="margin-top:10px">
-        <div class="grow">
-          <label>Only this element <small>(optional: tag, .class or #id)</small>
-            <input id="selector" placeholder="whole page" spellcheck="false">
-          </label>
-        </div>
         <button class="primary" id="run">Run</button>
       </div>
       <p class="note" id="runNote"></p>
@@ -198,8 +197,8 @@
           <button id="autoForget" title="Treat every job on the page as new again">Forget seen</button>
         </div>
         <p class="note" id="autoStatus">Not watching.</p>
-        <p class="note">Jobs already on the page when watching starts are remembered but not handled;
-          only ones appearing afterwards are decided and sent.</p>
+        <p class="note">Starting asks whether to send the jobs posted while watching was off. After that,
+          each new job is decided and sent as it appears.</p>
       </div>
     </section>
 
@@ -218,9 +217,10 @@
       </div>
     </section>
     </div>
+    </div>
+    </div>
 
     <div id="tab-report" class="hidden">
-      <p id="regBanner" class="note hidden" style="margin-bottom:10px"></p>
       <section class="card report">
         <aside class="report-list">
           <div class="row between" style="margin-bottom:8px">
@@ -265,6 +265,21 @@
         <div class="row" style="justify-content:flex-end; margin-top:12px">
           <button id="newCancel">Cancel</button>
           <button id="newOk" class="primary">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="catchUpDialog" class="overlay hidden" aria-hidden="true">
+      <div class="card dialog">
+        <h2>Send missed jobs?</h2>
+        <p>Jobs may have been posted while watching was off. Analyse them and send them on now?</p>
+        <p class="note" id="catchUpLast"></p>
+        <p class="note">Yes looks for that job in the top 25 and analyses every job above it, or the top 25
+          if it is not there. No only handles jobs posted from now on.</p>
+        <div class="row" style="justify-content:flex-end; margin-top:12px">
+          <button id="catchUpCancel">Cancel</button>
+          <button id="catchUpNo">No</button>
+          <button id="catchUpYes" class="primary">Yes</button>
         </div>
       </div>
     </div>
@@ -319,7 +334,7 @@
             if (id === 'sendList' && input.checked) { extract.add(item); }   // cannot send what is not read
             renderPicks();
             savePrefs();
-            if (lastResult) $('out').textContent = formatResult(lastResult, $('selector').value.trim());
+            if (lastResult) $('out').textContent = formatResult(lastResult);
           };
           label.appendChild(input);
           label.appendChild(document.createTextNode(' ' + item));
@@ -496,9 +511,8 @@
       }
     };
 
-    // Shows the categories you have switched on. With none on, or a selector typed, you get raw text.
-    function formatResult(data, selector) {
-      if (selector) return data.text || '(nothing extracted)';
+    // Shows the categories you have switched on. With none on, you get raw text.
+    function formatResult(data) {
       const fields = data.fields || {};
       const client = data.client || {};
       const project = data.project || {};
@@ -557,6 +571,43 @@
       }
       return parts.join('\n\n');
     }
+
+    // ---- Report -------------------------------------------------------------
+    let threads = [];
+    let openThread = null;
+    let registered = false;
+    let PROJECT_NAME = 'vollna-scraper';
+
+    async function loadThreads() {
+      try {
+        const data = await api('/api/reports');
+        threads = data.threads || [];
+        registered = !!data.registered;
+        PROJECT_NAME = data.projectName || PROJECT_NAME;
+        const banner = $('regBanner');
+        const channels = data.channels || [];
+        if (!registered) {
+          banner.textContent = `⚠ Not registered yet. Use Report → New → Register me to register "${PROJECT_NAME}" with a server.`;
+        } else if (!channels.length) {
+          banner.textContent = `⚠ Registered as "${PROJECT_NAME}" (id ${data.serverId}), but the server has not `
+            + 'allocated a channel to it. Nothing can be sent until it does; this updates by itself.';
+        } else {
+          banner.textContent = `Registered as "${PROJECT_NAME}" · id ${data.serverId} · channel${channels.length === 1 ? '' : 's'}: `
+            + channels.map((c) => '#' + c + (c === data.jobChannel && channels.length > 1 ? ' (jobs go here)' : '')).join(', ');
+        }
+        banner.textContent += data.note ? ' · server unreachable: ' + data.note
+                                        : (registered ? ' · listening for the server' : '');
+        banner.classList.toggle('warn', !registered || !channels.length || !!data.note);
+        banner.classList.remove('hidden');
+        renderThreads();
+        // the poll may have brought an approval or a reply into the open conversation
+        const open = threads.find((t) => t.id === openThread);
+        if (open && open.count !== $('chatHistory').querySelectorAll('.bubble').length) {
+          renderChat((await api('/api/reports/thread?id=' + encodeURIComponent(open.id))).thread);
+        }
+      } catch (e) { show(e.message, false); }
+    }
+
 
 
     function renderThreads() {
@@ -665,7 +716,9 @@
     function closeDialog() { $('newDialog').classList.add('hidden'); }
     $('newCancel').onclick = closeDialog;
     $('newDialog').onclick = (e) => { if (e.target === $('newDialog')) closeDialog(); };
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDialog(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeDialog(); $('catchUpDialog').classList.add('hidden'); }
+    });
     document.querySelectorAll('input[name="newKind"]').forEach((radio) => { radio.onchange = syncDialog; });
     $('newValue').onkeydown = (e) => { if (e.key === 'Enter') $('newOk').click(); };
 
@@ -699,7 +752,6 @@
 
     // ---- Manual vs Auto -----------------------------------------------------
     let mode = 'manual';
-    let autoTimer = null;
 
     function setMode(next) {
       mode = next;
@@ -711,8 +763,7 @@
         radio.checked = radio.value === mode;
       });
       try { localStorage.setItem('scraper.mode', mode); } catch (e) { /* private mode */ }
-      if (mode === 'auto') { loadAuto(); autoTimer = autoTimer || setInterval(loadAuto, 15000); }
-      else if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+      if (mode === 'auto') loadAuto();
     }
 
     function pill(text, kind) { return `<span class="pill ${kind}">${text}</span>`; }
@@ -724,6 +775,7 @@
       $('autoStatus').textContent = data.running
         ? `Watching ${data.url} every ${data.interval}s · ${data.watching} jobs known · last check ${data.checked || 'pending'}`
           + (data.error ? ` · problem: ${data.error}` : '')
+          + (data.note ? ` · ${data.note}` : '')
         : (data.error ? `Stopped. Last problem: ${data.error}` : 'Not watching.');
       $('autoStatus').style.color = data.error ? 'var(--err)' : '';
       const rows = $('handledRows');
@@ -777,17 +829,31 @@
       radio.onchange = () => setMode(radio.value);
     });
 
+    // Start asks first whether the jobs posted while watching was off should be sent.
     $('autoStart').onclick = async () => {
       const url = $('url').value.trim();
       if (!url) return show('Paste the feed URL to watch.', false);
+      let last = null;
+      try { last = ((await api('/api/auto')).last || {})[url] || null; } catch (e) { /* ask anyway */ }
+      $('catchUpLast').textContent = last
+        ? `Last job checked on this page: "${last.title || '(no title)'}" at ${last.at}.`
+        : 'No last job is remembered for this page yet; the newest job already seen on it is used instead.';
+      $('catchUpDialog').classList.remove('hidden');
+    };
+    async function startWatching(catchUp) {
+      $('catchUpDialog').classList.add('hidden');
       $('autoStart').disabled = true;
       try {
         renderAuto(await api('/api/auto/start', {
-          url, session: selected, interval: Number($('autoInterval').value),
+          url: $('url').value.trim(), session: selected, interval: Number($('autoInterval').value),
+          catchUp,
         }));
-        show('Watching started.', true);
+        show(catchUp ? 'Watching started: missed jobs are being analysed first.' : 'Watching started.', true);
       } catch (e) { show(e.message, false); $('autoStart').disabled = false; }
-    };
+    }
+    $('catchUpYes').onclick = () => startWatching(true);
+    $('catchUpNo').onclick = () => startWatching(false);
+    $('catchUpCancel').onclick = () => $('catchUpDialog').classList.add('hidden');
     $('autoStop').onclick = async () => {
       try { renderAuto(await api('/api/auto/stop', {})); show('Stopped.', true); }
       catch (e) { show(e.message, false); }
@@ -815,6 +881,7 @@
     let savedTab = 'workplace';
     try { savedTab = localStorage.getItem('scraper.tab') || 'workplace'; } catch (e) { /* private mode */ }
     showTab(savedTab);
+    if (savedTab !== 'report') loadThreads();
 
     refresh();
     loadPrefs().catch((e) => show(e.message, false));
@@ -822,7 +889,19 @@
     try { savedMode = localStorage.getItem('scraper.mode') || 'manual'; } catch (e) { /* private mode */ }
     setMode(savedMode);
     restoreAuto();
-    setInterval(() => { if (panelOpen) refresh(); }, 5000);
+
+    // The server says when something changed (a server notice, a new channel, a job handled, a
+    // login window closed) and the page redraws then, instead of asking on a timer. EventSource
+    // reconnects by itself after a server restart; on (re)connecting, catch up on what was missed.
+    function redraw() {
+      loadThreads();
+      refresh();
+      if (mode === 'auto') loadAuto();
+    }
+    const updates = new EventSource('/api/events');
+    updates.onmessage = redraw;
+    let connectedOnce = false;
+    updates.onopen = () => { if (connectedOnce) redraw(); connectedOnce = true; };
   </script>
 </body>
 </html>
