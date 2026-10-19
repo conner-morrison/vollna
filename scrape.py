@@ -664,20 +664,36 @@ def chrome_dump(url, profile, wait_ms, use_snapshot=False):
     # Headless Chrome prints the DOM but then keeps running on a saved profile, so take what it
     # printed and stop waiting for it to quit.
     limit = max(20, wait_ms / 1000 + 15)
-    stderr = ''
+    # Chrome's own session, so a timeout can kill its renderer and helper processes too; killing
+    # only the main one left them running, and a pile of them slowed every later render
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                               errors='replace', start_new_session=True)
     try:
-        done = subprocess.run(command, capture_output=True, text=True, timeout=limit)
-        html, stderr = done.stdout, done.stderr
-    except subprocess.TimeoutExpired as expired:
-        html = expired.stdout or ''
-        if isinstance(html, bytes):
-            html = html.decode('utf-8', 'replace')
+        html, stderr = process.communicate(timeout=limit)
+    except subprocess.TimeoutExpired:
+        kill_group(process)
+        html, stderr = process.communicate()
+    finally:
+        kill_group(process)
 
     if 'profile appears to be in use' in stderr or 'ProcessSingleton' in stderr:
         sys.exit('The scraper Chrome window is still open. Close it and run this again.')
     if not html.strip():
-        sys.exit('Chrome rendered nothing within %ds.\n%s' % (limit, stderr.strip()[:500]))
+        raise EmptyRender('Chrome rendered nothing within %ds.\n%s' % (limit, stderr.strip()[:500]))
     return html
+
+
+class EmptyRender(SystemExit):
+    """Headless Chrome printed no page. Usually a one-off stall, so a watcher tries again."""
+
+
+def kill_group(process):
+    import signal
+
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
 
 
 def looks_like_login(html, recipe):

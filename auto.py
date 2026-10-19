@@ -18,6 +18,7 @@ import scrape
 HERE = os.path.dirname(os.path.abspath(__file__))
 HANDLED_FILE = os.path.join(HERE, 'handled.json')
 MAX_HANDLED = 200
+RENDER_ATTEMPTS = 3        # an empty Chrome render is tried this many times before stopping
 CATCH_UP_DEPTH = 25        # how far down the page to look for the last job before giving up
 
 state = {
@@ -159,7 +160,7 @@ def send_job(row, decision, why, send_list):
 def handle_once(extract_list, send_list):
     """One pass: read the page, handle jobs not seen before."""
     profile = state['profile']
-    html = scrape.chrome_dump(state['url'], profile, 25000, use_snapshot=True)
+    html = render(state['url'], profile)
     context = scrape.page_context(html)
     if context['accessDenied']:
         raise RuntimeError('session "%s" has no access to that page' % state['session'])
@@ -207,6 +208,17 @@ def handle_once(extract_list, send_list):
         raise RuntimeError('%d job(s) could not be sent to the server: %s'
                            % (len(failed), failed[0]['status']))
     return len(fresh), first_pass
+
+
+def render(url, profile):
+    """The page's HTML. An empty render is retried: headless Chrome now and then stalls once and
+    then works, and stopping the watcher for that needed someone to press Start again."""
+    for attempt in range(RENDER_ATTEMPTS):
+        try:
+            return scrape.chrome_dump(url, profile, 25000, use_snapshot=True)
+        except scrape.EmptyRender:
+            if attempt + 1 == RENDER_ATTEMPTS or stop_event.wait(10):
+                raise
 
 
 def missed_jobs(rows, seen, catch_up):
