@@ -20,6 +20,9 @@ HANDLED_FILE = os.path.join(HERE, 'handled.json')
 MAX_HANDLED = 200
 RENDER_ATTEMPTS = 3        # an empty Chrome render is tried this many times before stopping
 CATCH_UP_DEPTH = 25        # how far down the page to look for the last job before giving up
+LOGIN_RECHECKS = 3         # a page that looks logged out is rendered this many times before stopping
+LOGIN_RECHECK_WAIT = 60    # seconds between them: long enough for Chrome to save renewed cookies
+LOGGED_OUT_FILE = os.path.join(HERE, 'logged-out.html')
 
 state = {
     'running': False, 'url': '', 'session': '', 'interval': 120,
@@ -160,7 +163,7 @@ def send_job(row, decision, why, send_list):
 def handle_once(extract_list, send_list):
     """One pass: read the page, handle jobs not seen before."""
     profile = state['profile']
-    html = render(state['url'], profile)
+    html = render_logged_in(state['url'], profile)
     context = scrape.page_context(html)
     if context['accessDenied']:
         raise RuntimeError('session "%s" has no access to that page' % state['session'])
@@ -168,7 +171,8 @@ def handle_once(extract_list, send_list):
     # Saying so beats watching an empty page for days and reporting nothing wrong.
     if scrape.needs_login(html):
         raise RuntimeError('session "%s" is logged out of Vollna: open the session and log in '
-                           'again, then start watching' % state['session'])
+                           'again, then start watching (the page seen is in logged-out.html)'
+                           % state['session'])
 
     rows = [r for r in scrape.parse_rows(html) if r['projectId']]
     seen = set(state['seen'])
@@ -221,6 +225,23 @@ def render(url, profile):
                 raise
 
 
+def render_logged_in(url, profile):
+    """The page's HTML, looked at again before a logged-out page is believed.
+
+    Vollna renews its login cookies now and then. An open window on the session gets the new ones,
+    but Chrome saves them to disk a little later, and a render from the disk copy in between sends
+    a token Vollna has just retired: one sign-in page while the session is in fact logged in.
+    """
+    for attempt in range(LOGIN_RECHECKS):
+        html = render(url, profile)
+        if not scrape.needs_login(html):
+            return html
+        if attempt + 1 == LOGIN_RECHECKS or stop_event.wait(LOGIN_RECHECK_WAIT):
+            with open(LOGGED_OUT_FILE, 'w') as handle:
+                handle.write(html)          # what was seen, for when it is not a real logout
+            return html
+
+
 def missed_jobs(rows, seen, catch_up):
     """The jobs to handle on the first check after starting, and a note saying why.
 
@@ -263,6 +284,8 @@ def loop(extract_list, send_list):
             # profile) with sys.exit, a SystemExit that "except Exception" lets through; it used to
             # end this thread silently while the panel still said "watching"
             except (Exception, SystemExit) as problem:      # noqa: BLE001 - stop, and tell someone
+                if stop_event.is_set():
+                    break                   # stopped by hand mid-check: nothing to report
                 # Watching on after an error only repeats it (a wrong URL, a logged-out session),
                 # so stop and alert a person, who can fix it and start again.
                 when = time.strftime('%Y-%m-%d %H:%M')

@@ -16,6 +16,7 @@ __pycache__/
 reports.json
 state.json
 handled.json
+logged-out.html
 
 # Scraped pages and extraction results: other people's job posts and client details, not source code.
 pages/

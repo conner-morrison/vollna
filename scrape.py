@@ -624,7 +624,10 @@ def chrome_login(url, profile):
     print('and run the same command again without --login.')
 
 
-SNAPSHOT_FILES = ('Local State', 'Default/Cookies', 'Default/Network/Cookies',
+# A -journal file exists while Chrome is writing that database. Copying it along lets SQLite roll
+# the copy back to the last complete state instead of reading a half-written cookie store.
+SNAPSHOT_FILES = ('Local State', 'Default/Cookies', 'Default/Cookies-journal',
+                  'Default/Network/Cookies', 'Default/Network/Cookies-journal',
                   'Default/Preferences', 'Default/Login Data')
 
 
