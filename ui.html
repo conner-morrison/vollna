@@ -789,7 +789,8 @@
                             : (job.title || '(no title)')}`
             + `<div class="note">${job.why || ''}`
             + `${job.clientName ? ' · client: ' + job.clientName : ''}`
-            + `${job.historyCount != null ? ' · ' + job.historyCount + ' past contracts' : ''}</div></td>`
+            + `${job.historyUnreadable ? ' · history unreadable'
+                : job.historyCount != null ? ' · ' + job.historyCount + ' past contracts' : ''}</div></td>`
           + `<td>${pill(job.decision, decision)}</td>`
           + `<td>${pill(job.status, sent)}</td>`;
         rows.appendChild(tr);

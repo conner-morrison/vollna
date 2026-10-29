@@ -11,6 +11,7 @@ import time
 
 import events
 import notify
+import relevance
 import reports
 import rules
 import scrape
@@ -56,14 +57,23 @@ def save_handled():
 
 
 def extras(row, wanted):
-    """Work history and the client's name, fetched only when the sidebar asks for them."""
+    """Work history and the client's name, fetched only when the sidebar asks for them.
+
+    A history that could not be read sets row['historyUnreadable'], so the message says so rather
+    than claiming the client has no past contracts. Vollna answers {"success":false} (HTTP 429)
+    once its rate limit is reached, and headless Chrome shows that as an ordinary page.
+    """
     if not ({'Work history', 'Client name'} & set(wanted)) or not row['projectId']:
         return None, None, 0
     try:
         dom = scrape.chrome_dump(scrape.WORK_HISTORY_URL % row['projectId'], state['profile'], 20000,
                                  use_snapshot=True)
-        content = json.loads(scrape.text_from_html(dom)).get('content') or ''
-    except Exception:                       # noqa: BLE001 - a missing history must not stop the run
+        payload = json.loads(scrape.text_from_html(dom))
+        if not isinstance(payload, dict) or payload.get('success') is False:
+            raise ValueError('Vollna refused: %s' % str(payload)[:80])
+        content = payload.get('content') or ''
+    except (Exception, SystemExit):         # noqa: BLE001 - a missing history must not stop the run
+        row['historyUnreadable'] = True
         return None, None, 0
     history = scrape.parse_work_history(content)
     if 'Client name' in wanted:
@@ -102,7 +112,9 @@ def job_text(row, decision, why, send_list):
             values = row.get(key) or {}
             block += ['', item + ':'] + ['  %s: %s' % (name, values.get(name) or '(not found)')
                                          for name in fields]
-    if 'Work history' in send_list:
+    if 'Work history' in send_list and row.get('historyUnreadable'):
+        block += ['', 'Work history: unreadable']
+    elif 'Work history' in send_list:
         history = row.get('history') or []
         block += ['', 'Work history (%d past contract%s):' % (len(history),
                                                              '' if len(history) == 1 else 's')]
@@ -186,10 +198,17 @@ def handle_once(extract_list, send_list):
 
     for row in fresh:
         seen.add(row['projectId'])
-        history, name, mentions = extras(row, extract_list)
+        # decided before the work-history lookup, so a job that is plainly not software work does
+        # not spend one of the lookups Vollna rate-limits
+        other = relevance.unrelated(row['Job title'], row.get('skills'), row.get('Job description'))
+        if other:
+            history, name, mentions = None, None, 0
+            decision, why = rules.SKIP, 'not software work: "%s" and nothing technical' % other
+        else:
+            history, name, mentions = extras(row, extract_list)
+            decision, why = rules.decide(row['client'])
         row['history'] = history
         row['clientName'] = {'name': name, 'mentions': mentions} if name or 'Client name' in extract_list else None
-        decision, why = rules.decide(row['client'])
         # skip means skip: nothing is sent about those jobs (send_job refuses them too)
         status = send_job(row, decision, why, send_list)
         state['handled'].insert(0, {
@@ -198,6 +217,7 @@ def handle_once(extract_list, send_list):
             'projectId': row['projectId'],
             'clientName': (row['clientName'] or {}).get('name') if row.get('clientName') else None,
             'historyCount': len(history or []) if history is not None else None,
+            'historyUnreadable': bool(row.get('historyUnreadable')),
         })
     state['seen'] = list(seen)
     state['checked'] = time.strftime('%Y-%m-%d %H:%M')

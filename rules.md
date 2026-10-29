@@ -3,7 +3,22 @@
 What this project decides about a job before anything is sent to the server. The result is one of
 **bid**, **manual check** or **skip**.
 
-Client info is judged first.
+Whether the job is software work at all is judged first, then client info.
+
+## Not software work
+
+A job that is plainly not software work is a **skip**, decided before its work history is looked up
+(those lookups are rate-limited by Vollna). The word lists are in `relevance.py`.
+
+- Anything technical keeps the job: a tech word in the title or skill tags (`WordPress`, `CRM`,
+  `AI`, `Automation`, …), or a programming term in the description (`API`, `Python`, `GitHub`, …).
+- Only when there is none does the title or skill tags naming other work make it a skip:
+  bookkeeping, tax, sales, cold calling, lead generation, recruiting, virtual assistant, legal,
+  insurance, video editing, graphic design, Google/Meta Ads, coaching, real estate, …
+- Neither: kept, and judged by the client rules below.
+
+Vague jobs are kept on purpose: missing a real job is worse than letting an unrelated one through.
+The reason shown is the word that decided it, e.g. `not software work: "Bookkeep" and nothing technical`.
 
 ## Client rules
 
