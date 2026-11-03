@@ -21,8 +21,9 @@ poll_lock = threading.Lock()
 
 
 def env():
-    """RELAY_URL / RELAY_TOKEN / RELAY_CHANNEL, read from .env next to the project."""
-    values = {}
+    """RELAY_URL / RELAY_TOKEN / RELAY_CHANNEL, read from the environment, then from .env next to
+    the project. A host such as Railway has no .env and passes these as environment variables."""
+    values = {key: value for key, value in os.environ.items() if value}
     for path in ENV_FILES:
         if not os.path.exists(path):
             continue

@@ -50,6 +50,10 @@ if not IS_MAC:
     # not reach. The basic store uses a fixed key, so the login window and the headless snapshot
     # always agree, and no keyring prompt appears.
     COMMON_FLAGS.append('--password-store=basic')
+    if os.geteuid() == 0:
+        # in a container: Chrome refuses to run as root with its sandbox on, and the default
+        # /dev/shm there is too small for it
+        COMMON_FLAGS += ['--no-sandbox', '--disable-dev-shm-usage']
 
 STATUS_JS = """(function () {
   var login = %s;

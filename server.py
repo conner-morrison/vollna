@@ -16,6 +16,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import auto
 import events
+import notify
 import reports
 import scrape
 
@@ -25,7 +26,12 @@ LEGACY_PROFILE = os.path.join(HERE, 'chrome-profile')
 STATE_FILE = os.path.join(HERE, 'state.json')
 VOLLNA_LOGIN = 'https://www.vollna.com/login'
 VOLLNA_DASHBOARD = 'https://www.vollna.com/dashboard'
-PORT = int(os.environ.get('SCRAPER_PORT', '8787'))
+PORT = int(os.environ.get('PORT') or os.environ.get('SCRAPER_PORT', '8787'))
+# 127.0.0.1 keeps the panel on this machine; a host such as Railway sets HOST=0.0.0.0
+HOST = os.environ.get('HOST', '127.0.0.1')
+# when set, every request needs it (browser login: any user name, this password). Required once the
+# panel is reachable from the internet, since it drives a logged-in Vollna session.
+UI_PASSWORD = os.environ.get('UI_PASSWORD', '')
 
 # What can be pulled off a page, what is pulled by default, and what is sent on by default.
 ITEMS = ['Job title', 'Job link', 'Job description', 'Screening Questions', 'Project info',
@@ -304,7 +310,67 @@ class Handler(BaseHTTPRequestHandler):
         except (BrokenPipeError, ConnectionResetError):
             return                          # the page was closed or reloaded
 
+    def allowed(self):
+        """Without UI_PASSWORD everyone is let in; with it, ask the browser for a login first."""
+        if not UI_PASSWORD:
+            return True
+        import base64
+        import hmac
+        given = self.headers.get('Authorization', '')
+        if given.startswith('Basic '):
+            try:
+                password = base64.b64decode(given[6:]).decode().partition(':')[2]
+            except ValueError:
+                password = ''
+            if hmac.compare_digest(password.encode(), UI_PASSWORD.encode()):
+                return True
+        self.send_response(401)
+        self.send_header('WWW-Authenticate', 'Basic realm="scraper"')
+        self.send_header('Content-Length', '0')
+        self.end_headers()
+        return False
+
+    def upload_session(self):
+        """Take a logged-in session made on another machine, as a .tar.gz of the profile.
+
+        A server has no screen for the login window, so log in locally and send the result here.
+        Only the files a scrape reads (scrape.SNAPSHOT_FILES) are unpacked; anything else in the
+        archive is ignored, which also keeps odd paths in it from landing anywhere else.
+        """
+        import io
+        import tarfile
+        from urllib.parse import parse_qs, urlparse
+        name = parse_qs(urlparse(self.path).query).get('name', [''])[0].strip()
+        if not name or not name.replace('-', '').replace('_', '').isalnum():
+            return self.send_json({'error': 'Give ?name= with letters, digits, - and _.'}, 400)
+        length = int(self.headers.get('Content-Length', 0))
+        try:
+            archive = tarfile.open(fileobj=io.BytesIO(self.rfile.read(length)), mode='r:*')
+        except tarfile.TarError:
+            return self.send_json({'error': 'Send a .tar.gz of the profile folder.'}, 400)
+        profile = profile_path(name)
+        unpacked = []
+        with archive:
+            for member in archive.getmembers():
+                relative = member.name.lstrip('./')
+                if member.isfile() and relative in scrape.SNAPSHOT_FILES:
+                    target = os.path.join(profile, relative)
+                    os.makedirs(os.path.dirname(target), exist_ok=True)
+                    with open(target, 'wb') as handle:
+                        shutil.copyfileobj(archive.extractfile(member), handle)
+                    unpacked.append(relative)
+        if not unpacked:
+            return self.send_json({'error': 'No login files found. Make the archive from inside '
+                                            'the profile folder (tar -C profiles/NAME ...).'}, 400)
+        keep_session_cookies(profile)
+        with lock:
+            sessions[name] = dict(sessions.get(name, {}), state='ready', proc=None)
+        events.changed()
+        return self.send_json({'ok': True, 'session': name, 'files': unpacked})
+
     def do_GET(self):
+        if not self.allowed():
+            return
         if self.path.startswith('/api/reports/thread'):
             from urllib.parse import parse_qs, urlparse
             wanted = parse_qs(urlparse(self.path).query).get('id', [''])[0]
@@ -331,6 +397,9 @@ class Handler(BaseHTTPRequestHandler):
 
         if self.path.startswith('/api/prefs'):
             return self.send_json(preferences())
+
+        if self.path.startswith('/api/telegram'):
+            return self.send_json(notify.summary())
 
         if self.path.startswith('/api/sessions'):
             listing = list_sessions()
@@ -361,6 +430,10 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        if not self.allowed():
+            return
+        if self.path.startswith('/api/session/upload'):
+            return self.upload_session()
         length = int(self.headers.get('Content-Length', 0))
         try:
             data = json.loads(self.rfile.read(length) or b'{}')
@@ -459,6 +532,24 @@ class Handler(BaseHTTPRequestHandler):
                            send=keep(data.get('send')))
                 return self.send_json(preferences())
 
+            if self.path == '/api/telegram':
+                # a blank token keeps the saved one, so the chat id can change without retyping it
+                token = (data.get('token') or '').strip() or notify.saved().get('token', '')
+                chat = str(data.get('chatId') or '').strip()
+                if not token or not chat:
+                    return self.send_json({'error': 'Give both the bot token and the chat id.'}, 400)
+                if ':' not in token:
+                    return self.send_json({'error': 'That does not look like a bot token '
+                                                    '(it has the form 123456:ABC...).'}, 400)
+                notify.save(token, chat)
+                return self.send_json(notify.summary())
+
+            if self.path == '/api/telegram/test':
+                result = notify.telegram('Test message: alerts from this project will arrive here.')
+                if result != 'sent':
+                    return self.send_json({'error': 'Test ' + result}, 400)
+                return self.send_json({'ok': True})
+
             if self.path == '/api/session/select':
                 name = (data.get('name') or '').strip()
                 names = [s['name'] for s in list_sessions()]
@@ -524,6 +615,8 @@ def listen_to_relay(hold=50):
 if __name__ == '__main__':
     os.makedirs(PROFILES_DIR, exist_ok=True)
     threading.Thread(target=listen_to_relay, daemon=True).start()
-    print('Scraper UI: http://127.0.0.1:%d  (Ctrl+C to stop)' % PORT)
+    print('Scraper UI: http://%s:%d  (Ctrl+C to stop)' % (HOST, PORT), flush=True)
+    if HOST != '127.0.0.1' and not UI_PASSWORD:
+        print('WARNING: reachable from other machines with no UI_PASSWORD set', flush=True)
     # threaded: an open /api/events stream or a long scrape must not hold up every other request
-    ThreadingHTTPServer(('127.0.0.1', PORT), Handler).serve_forever()
+    ThreadingHTTPServer((HOST, PORT), Handler).serve_forever()

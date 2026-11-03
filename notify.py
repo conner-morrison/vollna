@@ -1,15 +1,48 @@
 #!/usr/bin/env python3
 """Telegram alerts: a message to a chat through a bot, for things a person must hear about.
 
-Needs TELEGRAM_BOT_TOKEN (from @BotFather) and TELEGRAM_CHAT_ID in .env. Every message starts with
-this project's name in bold, so alerts from several projects in one chat can be told apart.
+Needs a bot token (from @BotFather) and a chat id, saved on the panel's Profile tab (telegram.json)
+or set as TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env; the saved ones win. Every message starts
+with this project's name in bold, so alerts from several projects in one chat can be told apart.
 """
 import html
 import json
+import os
 import urllib.error
 import urllib.request
 
 import reports
+
+TELEGRAM_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'telegram.json')
+
+
+def saved():
+    try:
+        with open(TELEGRAM_FILE) as handle:
+            return json.load(handle)
+    except (OSError, ValueError):
+        return {}
+
+
+def save(token, chat):
+    with open(TELEGRAM_FILE, 'w') as handle:
+        json.dump({'token': token, 'chat': chat}, handle, indent=2)
+
+
+def settings():
+    """(token, chat id, where they came from): the Profile tab's, else .env / the environment."""
+    mine = saved()
+    if mine.get('token') and mine.get('chat'):
+        return mine['token'], mine['chat'], 'profile'
+    found = reports.env()
+    token, chat = found.get('TELEGRAM_BOT_TOKEN'), found.get('TELEGRAM_CHAT_ID')
+    return token, chat, ('env' if token and chat else None)
+
+
+def summary():
+    """What the panel may show: never the whole token, which is the bot's password."""
+    token, chat, source = settings()
+    return {'chatId': chat or '', 'tokenEnd': (token or '')[-4:], 'source': source}
 
 
 def telegram(text, error=False):
@@ -17,10 +50,9 @@ def telegram(text, error=False):
 
     An error alert gets a red cross before the name, so it stands out in the chat at a glance.
     """
-    settings = reports.env()
-    token, chat = settings.get('TELEGRAM_BOT_TOKEN'), settings.get('TELEGRAM_CHAT_ID')
+    token, chat, _ = settings()
     if not token or not chat:
-        return 'not sent: set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env'
+        return 'not sent: save a Telegram bot token and chat id on the Profile tab'
     # the name in bold; everything is escaped, since an error may hold "<" or "&"
     message = '%s<b>%s</b>\n%s' % ('\u274c ' if error else '', html.escape(reports.project_name()),
                                    html.escape(text[:3900]))

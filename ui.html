@@ -286,8 +286,24 @@
 
     <div id="tab-profile" class="hidden">
       <section class="card">
-        <h2>Profile</h2>
-        <p class="muted">Nothing here yet.</p>
+        <h2>Telegram alerts</h2>
+        <p class="muted" style="margin:0 0 12px">When watching stops on an error, this project messages
+          this chat through your bot.</p>
+        <p id="tgStatus" class="status-bar"></p>
+        <div style="display:grid; gap:10px">
+          <label>Bot token <small>From @BotFather. Leave blank to keep the saved one.</small>
+            <input id="tgToken" type="password" placeholder="123456:ABC..." autocomplete="off" spellcheck="false">
+          </label>
+          <label>Chat id <small>Send your bot a message, then open
+            api.telegram.org/bot&lt;token&gt;/getUpdates and copy "chat":{"id": …}.</small>
+            <input id="tgChat" placeholder="987654321" autocomplete="off" spellcheck="false">
+          </label>
+        </div>
+        <div class="row" style="justify-content:flex-end; margin-top:12px">
+          <button id="tgTest">Send test</button>
+          <button id="tgSave" class="primary">Save</button>
+        </div>
+        <p id="tgMsg" class="note"></p>
       </section>
     </div>
   </main>
@@ -874,7 +890,38 @@
       });
       try { localStorage.setItem('scraper.tab', name); } catch (e) { /* private mode */ }
       if (name === 'report') loadThreads();
+      if (name === 'profile') loadTelegram();
     }
+
+    function renderTelegram(data) {
+      const bar = $('tgStatus');
+      bar.classList.toggle('warn', !data.source);
+      bar.textContent = !data.source ? 'Not set up: error alerts are not sent.'
+        : 'Alerts go to chat ' + data.chatId + ' with the bot token ending …' + data.tokenEnd
+          + (data.source === 'env' ? ' (from .env; saving here replaces it).' : '.');
+      $('tgChat').value = data.chatId;
+      $('tgToken').value = '';
+      $('tgTest').disabled = !data.source;
+    }
+    function tgNote(text, ok) {
+      $('tgMsg').textContent = text;
+      $('tgMsg').style.color = ok ? 'var(--ok)' : 'var(--err)';
+    }
+    async function loadTelegram() {
+      try { renderTelegram(await api('/api/telegram')); } catch (e) { tgNote(e.message, false); }
+    }
+    $('tgSave').onclick = async () => {
+      try {
+        renderTelegram(await api('/api/telegram', { token: $('tgToken').value, chatId: $('tgChat').value }));
+        tgNote('Saved.', true);
+      } catch (e) { tgNote(e.message, false); }
+    };
+    $('tgTest').onclick = async () => {
+      $('tgTest').disabled = true;
+      try { await api('/api/telegram/test', {}); tgNote('Test sent: check Telegram.', true); }
+      catch (e) { tgNote(e.message, false); }
+      $('tgTest').disabled = false;
+    };
 
     document.querySelectorAll('.tab').forEach((button) => {
       button.onclick = () => showTab(button.dataset.tab);

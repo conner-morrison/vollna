@@ -1,0 +1,18 @@
+# Kept out of the image: logins, local settings and running state (these live on the volume, or in
+# the host's environment variables), and anything rebuilt inside the image.
+.git
+.env
+profiles/
+chrome-profile/
+.venv-nlp/
+.venv/
+__pycache__/
+*.py[co]
+reports.json
+state.json
+telegram.json
+handled.json
+logged-out.html
+pages/
+out/
+.DS_Store
