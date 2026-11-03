@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="panel.css">
+  <style>
+    body { width: 340px; padding: 12px; display: grid; gap: 10px; }
+    .linked { font-size: 13px; word-break: break-all; }
+    .linked strong { display: block; word-break: normal; }
+    .interval { display: flex; align-items: center; gap: 6px; font-weight: 400; font-size: 13px; }
+    .interval input { width: 70px; }
+  </style>
+</head>
+<body>
+  <div class="row between">
+    <h1>Vollna Watcher</h1>
+    <a href="#" id="openPanel">Control panel</a>
+  </div>
+
+  <section class="card">
+    <h2>Linked tab</h2>
+    <div id="linked" class="linked muted">No tab linked yet.</div>
+    <div class="row end" style="margin-top:10px">
+      <button id="unlink">Unlink</button>
+      <button id="link" class="primary">Link this tab</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Watching</h2>
+    <p id="status" class="status-bar"></p>
+    <label class="interval">Check every <input id="interval" type="number" min="30" step="10"> seconds</label>
+    <label class="interval" title="A check only reads the tab: Vollna adds new jobs to it by itself. The tab is reloaded only when its job list has not changed for this long.">Reload if no change for <input id="reloadAfter" type="number" min="1" step="1"> minutes</label>
+    <label class="check" style="margin-top:6px"><input id="catchUp" type="checkbox" checked> Send jobs posted while stopped</label>
+    <div class="row end" style="margin-top:10px">
+      <button id="stop">Stop</button>
+      <button id="start" class="primary">Start</button>
+    </div>
+  </section>
+
+  <p id="msg" class="msg hidden"></p>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

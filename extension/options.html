@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Vollna Watcher</title>
+  <link rel="icon" href="icons/icon32.png">
+  <link rel="stylesheet" href="panel.css">
+  <style>
+    body { padding: 24px 16px; }
+    main { max-width: 860px; margin: 0 auto; display: grid; gap: 16px; }
+    .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tabs button { border: 1px solid transparent; border-radius: 999px; background: none; color: var(--muted); padding: 6px 14px; }
+    .tabs button:hover { color: var(--text); }
+    .tabs button.active { color: var(--text); background: var(--card); border-color: var(--line); font-weight: 600; }
+    .workplace { display: grid; grid-template-columns: 210px 1fr; gap: 16px; align-items: start; }
+    @media (max-width: 720px) { .workplace { grid-template-columns: 1fr; } }
+    .side h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .picks { display: grid; gap: 6px; }
+    .picks label { display: flex; align-items: center; gap: 8px; font-weight: 400; font-size: 13px; cursor: pointer; }
+    .picks input { width: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--muted); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+    td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .report { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
+    @media (max-width: 640px) { .report { grid-template-columns: 1fr; } }
+    .thread { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
+    .thread.active { border-color: var(--accent); }
+    .thread .title { font-weight: 500; font-size: 13px; }
+    .thread .meta { color: var(--muted); font-size: 12px; }
+    .thread.done .title { text-decoration: line-through; color: var(--muted); }
+    .chat { display: grid; gap: 8px; max-height: 50vh; overflow: auto; margin: 10px 0; }
+    .bubble { padding: 8px 10px; border-radius: 10px; font-size: 13px; white-space: pre-wrap; word-break: break-word; }
+    .bubble.server { background: var(--bg); border: 1px solid var(--line); }
+    .bubble.me { background: var(--okbg); color: var(--ok); justify-self: end; max-width: 85%; }
+    .bubble .when { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .form { display: grid; gap: 10px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="row between">
+      <h1>Vollna Watcher</h1>
+      <div class="tabs">
+        <button class="tab active" data-tab="workplace">Workplace</button>
+        <button class="tab" data-tab="report">Report</button>
+        <button class="tab" data-tab="profile">Profile</button>
+      </div>
+    </header>
+    <p id="msg" class="msg hidden"></p>
+
+    <div id="tab-workplace" class="workplace">
+      <aside class="card side">
+        <h2>Extract</h2>
+        <div id="extractList" class="picks"></div>
+        <h2 style="margin-top:14px">Send to server</h2>
+        <div id="sendList" class="picks"></div>
+        <p class="note">Work history and the client's name cost one extra Vollna request per job.</p>
+      </aside>
+      <section class="card">
+        <div class="row between">
+          <h2 style="margin:0">Handled jobs</h2>
+          <button id="forget">Forget all</button>
+        </div>
+        <p id="watchStatus" class="status-bar" style="margin-top:10px"></p>
+        <p class="note" style="margin:0 0 10px">Link a tab, start and stop watching from the extension's toolbar button.</p>
+        <table>
+          <thead><tr><th>At</th><th>Job</th><th>Decision</th><th>Sent</th></tr></thead>
+          <tbody id="handled"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div id="tab-report" class="hidden">
+      <section class="card report">
+        <div>
+          <div class="row between" style="margin-bottom:10px">
+            <h2 style="margin:0">Conversations</h2>
+            <button id="pollNow" title="Ask the server for anything new">Refresh</button>
+          </div>
+          <div id="threads"></div>
+          <p id="relayInfo" class="note"></p>
+        </div>
+        <div>
+          <div id="threadView" class="hidden">
+            <div class="row between">
+              <h2 id="threadTitle" style="margin:0"></h2>
+              <div class="row">
+                <button id="again" class="hidden">Request again</button>
+                <button id="complete">Mark completed</button>
+              </div>
+            </div>
+            <div id="chat" class="chat"></div>
+            <div class="row">
+              <textarea id="replyText" rows="2" placeholder="Write to the server"></textarea>
+              <button id="reply" class="primary">Send</button>
+            </div>
+          </div>
+          <div class="form" style="margin-top:16px">
+            <h2 style="margin:0">Register me</h2>
+            <label>Server URL <small>The relay's address, as for the Python version.</small>
+              <input id="registerUrl" placeholder="https://relay-....up.railway.app/upwork" spellcheck="false">
+            </label>
+            <div class="row end"><button id="register" class="primary">Register</button></div>
+            <h2 style="margin:8px 0 0">New request</h2>
+            <input id="newTitle" placeholder="What is this about?">
+            <textarea id="newText" rows="3" placeholder="The request"></textarea>
+            <div class="row end"><button id="newSend">Send request</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-profile" class="hidden" style="display:grid; gap:16px">
+      <section class="card form">
+        <h2 style="margin:0">Project</h2>
+        <label>Project name <small>What this project calls itself to the server and in Telegram alerts.</small>
+          <input id="projectName" spellcheck="false">
+        </label>
+        <div class="row end"><button id="saveProject" class="primary">Save</button></div>
+      </section>
+
+      <section class="card">
+        <h2>Telegram alerts</h2>
+        <p class="muted" style="margin:0 0 12px">When watching stops on an error, or a tab that is not Vollna
+          is linked, the extension messages this chat through your bot.</p>
+        <p id="tgStatus" class="status-bar"></p>
+        <div class="form">
+          <label>Bot token <small>From @BotFather. Leave blank to keep the saved one.</small>
+            <input id="tgToken" type="password" placeholder="123456:ABC..." autocomplete="off" spellcheck="false">
+          </label>
+          <label>Chat id <small>Send your bot a message, then open
+            api.telegram.org/bot&lt;token&gt;/getUpdates and copy "chat":{"id": …}.</small>
+            <input id="tgChat" placeholder="987654321" autocomplete="off" spellcheck="false">
+          </label>
+        </div>
+        <div class="row end" style="margin-top:12px">
+          <button id="tgTest">Send test</button>
+          <button id="tgSave" class="primary">Save</button>
+        </div>
+      </section>
+
+      <section class="card form">
+        <h2 style="margin:0">Move over from the Python version</h2>
+        <p class="muted" style="margin:0">Pick the Python project's <strong>reports.json</strong> to keep its server
+          registration and channel, and <strong>handled.json</strong> to keep the jobs it already handled, so
+          they are not sent again.</p>
+        <label>reports.json <input id="importReports" type="file" accept=".json,application/json"></label>
+        <label>handled.json <input id="importHandled" type="file" accept=".json,application/json"></label>
+        <div class="row end"><button id="import" class="primary">Import</button></div>
+      </section>
+    </div>
+  </main>
+  <script src="options.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Vollna Watcher",
+  "version": "1.0.0",
+  "description": "Watches a linked Vollna tab, decides on each new job and sends it to your relay, with Telegram alerts.",
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": { "default_popup": "popup.html", "default_title": "Vollna Watcher" },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["tabs", "storage", "alarms", "scripting"],
+  "host_permissions": ["https://www.vollna.com/*", "https://vollna.com/*", "https://api.telegram.org/*"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"]
+}

@@ -1,0 +1,49 @@
+/* Shared by the popup and the control panel; the same look as the Python version's ui.html. */
+:root {
+  --bg: #f6f7f9; --card: #fff; --text: #1f2937; --muted: #6b7280; --line: #e5e7eb;
+  --accent: #2563eb; --ok: #15803d; --okbg: #dcfce7; --warn: #b45309; --warnbg: #fef3c7;
+  --err: #b91c1c; --errbg: #fee2e2;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115; --card: #181b21; --text: #e5e7eb; --muted: #9ca3af; --line: #2a2f37;
+    --accent: #3b82f6; --ok: #4ade80; --okbg: #14321f; --warn: #fbbf24; --warnbg: #3a2c0b;
+    --err: #f87171; --errbg: #3b1414;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+       font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+h1 { font-size: 18px; margin: 0; }
+h2 { font-size: 15px; margin: 0 0 10px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.between { justify-content: space-between; }
+.end { justify-content: flex-end; }
+button { font: inherit; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--line);
+         background: var(--card); color: var(--text); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: .5; cursor: default; }
+input, textarea { font: inherit; width: 100%; padding: 7px 10px; border: 1px solid var(--line);
+                  border-radius: 8px; background: var(--bg); color: var(--text); }
+textarea { resize: vertical; }
+label { display: grid; gap: 4px; font-weight: 500; }
+label small { color: var(--muted); font-weight: 400; }
+label.check { display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; }
+label.check input { width: auto; }
+.note, .muted { color: var(--muted); font-size: 13px; margin: 6px 0 0; }
+.msg { padding: 8px 10px; border-radius: 8px; font-size: 13px; margin: 0; }
+.msg.ok { background: var(--okbg); color: var(--ok); }
+.msg.err { background: var(--errbg); color: var(--err); }
+.status-bar { margin: 0 0 10px; padding: 8px 12px; border-radius: 8px; font-size: 13px;
+              border: 1px solid var(--line); background: var(--card); }
+.status-bar.warn { background: var(--warnbg); color: var(--warn); border-color: transparent; }
+.status-bar.ok { background: var(--okbg); color: var(--ok); border-color: transparent; }
+.status-bar.err { background: var(--errbg); color: var(--err); border-color: transparent; }
+.hidden { display: none !important; }
+.pill { font-size: 12px; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.bid, .pill.sent { background: var(--okbg); color: var(--ok); }
+.pill.manual { background: var(--warnbg); color: var(--warn); }
+.pill.skip { background: var(--bg); color: var(--muted); }
+.pill.failed { background: var(--errbg); color: var(--err); }
+a { color: var(--accent); }

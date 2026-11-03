@@ -192,6 +192,11 @@
               <option value="900">15 minutes</option>
             </select>
           </label>
+          <label style="flex:0 0 190px" title="The open page is not reloaded on each check: Vollna adds new jobs to it by itself. It is reloaded only when its job list has not changed for this long.">Reload if no change for
+            <span class="row" style="flex-wrap:nowrap; gap:6px; font-weight:400">
+              <input id="autoReload" type="number" min="1" step="1" value="30" style="width:80px"> minutes
+            </span>
+          </label>
           <button id="autoStart" class="primary">Start watching</button>
           <button id="autoStop" disabled>Stop</button>
           <button id="autoForget" title="Treat every job on the page as new again">Forget seen</button>
@@ -789,7 +794,9 @@
       $('autoStart').disabled = !!data.running;
       $('autoStop').disabled = !data.running;
       $('autoStatus').textContent = data.running
-        ? `Watching ${data.url} every ${data.interval}s · ${data.watching} jobs known · last check ${data.checked || 'pending'}`
+        ? `Watching ${data.url} every ${data.interval}s · reload after ${Math.round(data.reloadAfter / 60)} min without a change`
+          + (data.reloaded ? ` (last reload ${data.reloaded})` : '')
+          + ` · ${data.watching} jobs known · last check ${data.checked || 'pending'}`
           + (data.error ? ` · problem: ${data.error}` : '')
           + (data.note ? ` · ${data.note}` : '')
         : (data.error ? `Stopped. Last problem: ${data.error}` : 'Not watching.');
@@ -832,9 +839,11 @@
           $('autoInterval').add(new Option(`${data.interval} seconds`, interval));
         }
         $('autoInterval').value = interval;
+        $('autoReload').value = Math.round(data.reloadAfter / 60);
         setMode('auto');
         return;
       }
+      if (data && data.reloadAfter) $('autoReload').value = Math.round(data.reloadAfter / 60);
       try { $('url').value = $('url').value || localStorage.getItem('scraper.url') || ''; } catch (e) { /* private mode */ }
       if (data && data.url && !$('url').value) $('url').value = data.url;
     }
@@ -863,7 +872,7 @@
       try {
         renderAuto(await api('/api/auto/start', {
           url: $('url').value.trim(), session: selected, interval: Number($('autoInterval').value),
-          catchUp,
+          reloadAfter: Math.max(1, Number($('autoReload').value) || 30) * 60, catchUp,
         }));
         show(catchUp ? 'Watching started: missed jobs are being analysed first.' : 'Watching started.', true);
       } catch (e) { show(e.message, false); $('autoStart').disabled = false; }

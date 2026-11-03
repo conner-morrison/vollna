@@ -518,7 +518,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(auto.start(url, name, profile_path(name),
                                                  int(data.get('interval') or 120),
                                                  prefs['extract'], prefs['send'],
-                                                 catch_up=bool(data.get('catchUp'))))
+                                                 catch_up=bool(data.get('catchUp')),
+                                                 reload_after=int(data.get('reloadAfter') or 1800)))
 
             if self.path == '/api/auto/stop':
                 return self.send_json(auto.stop())
