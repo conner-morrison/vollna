@@ -132,6 +132,19 @@ class LivePage:
         return self.evaluate('fetch(%s, {credentials: "include"}).then(r => r.text())' % json.dumps(path),
                              timeout=timeout)
 
+    def signed_in(self, url, timeout=30):
+        """Whether Vollna still takes the page's login: an open page keeps showing its last list
+        after the session ends, so only asking tells. None when the question itself failed."""
+        try:
+            answer = self.evaluate('fetch(%s, {method: "HEAD", credentials: "include", cache: "no-store"})'
+                                   '.then(r => r.status + " " + r.url)' % json.dumps(url), timeout=timeout)
+        except PageGone:
+            raise
+        except Exception:               # noqa: BLE001 - a network hiccup is not a logout
+            return None
+        status, _, where = (answer or '').partition(' ')
+        return not (status == '401' or '/login' in where)
+
     def close(self):
         if self.process.poll() is None:
             scrape.kill_group(self.process)

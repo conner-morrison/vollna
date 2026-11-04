@@ -269,6 +269,10 @@ def feed_html():
     # Vollna's own refresh can stall without the page saying so; a list that has not changed for
     # longer than the setting gets one reload, and the wait starts again from there
     stale = not opened and time.time() - state['changedAt'] > state['reloadAfter']
+    # an open page keeps showing its last list after the session ends; a reload shows the sign-in
+    # page, which read_feed and handle_once report
+    if not opened and not stale and page.signed_in(state['url']) is False:
+        stale = True
     for attempt in range(RENDER_ATTEMPTS + 1):
         if attempt or stale:
             if attempt and stop_event.wait(10 if attempt > 1 else 0):

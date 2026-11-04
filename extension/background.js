@@ -406,7 +406,8 @@ async function newRequest(title, text) {
 async function readTab(tabId, url, stale = false) {
   const tab = await chrome.tabs.get(tabId);
   const here = samePage(tab.url, url);
-  if (!stale && !tab.discarded && tab.status === 'complete') {
+  // an open tab keeps showing its last list after the session ends; a reload shows the sign-in page
+  if (!stale && !tab.discarded && tab.status === 'complete' && (await signedIn(tabId, url)) !== false) {
     const page = await readPage(tabId);
     // a sign-in page is the answer wherever Vollna sent the tab (it redirects there when logged out)
     if (page.login || (here && (page.rows.length || page.denied))) return page;
@@ -416,6 +417,16 @@ async function readTab(tabId, url, stale = false) {
 
 const samePage = (a, b) => String(a || '').replace(/[#?].*$/, '').replace(/\/+$/, '')
   === String(b || '').replace(/[#?].*$/, '').replace(/\/+$/, '');
+
+// Whether Vollna still takes the tab's login (only asking tells); null when the question failed.
+async function signedIn(tabId, url) {
+  try {
+    const [result] = await chrome.scripting.executeScript({ target: { tabId }, args: [url],
+      func: (address) => fetch(address, { method: 'HEAD', credentials: 'include', cache: 'no-store' })
+        .then((r) => !(r.status === 401 || r.url.includes('/login')), () => null) });
+    return result.result;
+  } catch (e) { return null; }
+}
 
 async function readPage(tabId) {
   await chrome.scripting.executeScript({ target: { tabId }, files: ['parse.js'] });
@@ -691,11 +702,14 @@ async function checkOnce() {
     // stop and alert a person, who can fix it and start again.
     const link = (await load('link')) || {};
     const when = now();
-    await stopWatching();
+    const error = `${problem.message.slice(0, 200)} (${when})`;
+    // stopped and why in one write, so the reason shows while the alert is on its way
+    await chrome.alarms.clear('watch');
+    await update('watch', { running: false, error });
     const alert = problem instanceof OutOfMind
       ? await outOfMind(problem.url, 'The linked tab was moved off Vollna, so watching stopped.')
       : await telegram(`Stopped watching because of an error.\n\nError: ${problem.message.slice(0, 500)}\nPage: ${link.url}\nAt: ${when}`, true);
-    await update('watch', { error: `${problem.message.slice(0, 200)} (${when}) · Telegram alert ${alert}` });
+    await update('watch', { error: `${error} · Telegram alert ${alert}` });
   }
 }
 
