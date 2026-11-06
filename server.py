@@ -97,6 +97,9 @@ def list_sessions():
     if os.path.isdir(PROFILES_DIR):
         names += sorted(d for d in os.listdir(PROFILES_DIR)
                         if os.path.isdir(os.path.join(PROFILES_DIR, d)))
+    # The saved session and the watcher's open page can disagree: the watcher works on a copy taken
+    # at Start, and the logins Vollna renews there are not written back. So both are shown.
+    watch = auto.status()
     out = []
     for name in names:
         info = sessions.get(name, {})
@@ -106,7 +109,12 @@ def list_sessions():
             state = 'ready'  # the window was closed by hand
             info = dict(info, state=state, proc=None)
             sessions[name] = info
-        out.append({'name': name, 'state': state,
+        watcher = None
+        if watch['session'] == name and watch['running'] and watch['checked']:
+            watcher = {'signedIn': True, 'at': watch['checked']}
+        elif watch['session'] == name and 'logged out' in (watch['error'] or ''):
+            watcher = {'signedIn': False, 'at': watch['checked']}
+        out.append({'name': name, 'state': state, 'watcher': watcher,
                     'check': info.get('check') or load_checks().get(name)})
     return out
 

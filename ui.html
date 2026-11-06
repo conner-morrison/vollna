@@ -394,8 +394,14 @@
         const verdict = s.check ? (LABELS[s.check.status] || 'not checked') : 'not checked';
         const verdictClass = s.check && s.check.ok ? 'ready' : s.check ? 'waiting' : '';
         const account = s.check && s.check.account ? ` <span class="muted">${s.check.account}</span>` : '';
+        // when it was checked is part of the answer: a login seen days ago says little about now
+        const checkedOn = s.check && s.check.at ? ' · checked ' + s.check.at.slice(0, 16).replace('T', ' ') : '';
+        const watcher = s.watcher
+          ? `<span class="tag ${s.watcher.signedIn ? 'ready' : 'waiting'}" title="What the watcher's open page showed at its last check. It works on a copy of the session taken at Start, so it can stay signed in after the saved session is logged out (or the other way round).">watcher ${s.watcher.signedIn ? 'signed in' : 'logged out'} · ${s.watcher.at}</span>`
+          : '';
         row.innerHTML = `<span class="name">${s.name}${account}</span>`
-          + `<span class="tag ${verdictClass}" title="${s.check ? (s.check.detail + (s.check.at ? ' (checked ' + s.check.at.replace('T', ' ') + ')' : '')) : 'Never checked'}">${verdict}</span>`
+          + `<span class="tag ${verdictClass}" title="${s.check ? s.check.detail + ' This is the saved session, as of that check: press Check to look again.' : 'Never checked'}">saved: ${verdict}${checkedOn}</span>`
+          + watcher
           + (s.state === 'waiting' ? '<span class="tag waiting">window open</span>' : '');
         row.onclick = () => {
           selected = s.name;
